@@ -71,4 +71,28 @@ public class Voice2Text implements Runnable{
         streamingRecognition.closeSend();
         microphone.close();
 	}
+	
+	// For unit testing purposes
+	public StreamingRecognition getStreamingRecognition() {
+		return streamingRecognition;
+	}
+
+	public ResponseObserverClass getResponseObserver() {
+		return responseObserver;
+	}
+
+	public AudioInputStream getAudio() {
+		return audio;
+	}
+
+	public Microphone getMicrophone() {
+		return microphone;
+	}
+
+	public AtomicBoolean getRunning() {
+		return running;
+	}
+	
+	
+	
 }
