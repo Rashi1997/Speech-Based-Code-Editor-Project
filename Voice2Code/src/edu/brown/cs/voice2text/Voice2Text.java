@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.sound.sampled.AudioInputStream;
+
+
+import com.google.cloud.speech.v1p1beta1.SpeechClient;
 import com.google.cloud.speech.v1p1beta1.StreamingRecognizeRequest;
 
 import voice2code.parts.InsertHandler;
@@ -16,17 +19,25 @@ public class Voice2Text implements Runnable{
 	private Microphone microphone;
 	
 	public Voice2Text() throws Exception{
-		streamingRecognition = new StreamingRecognition(responseObserver);
+		streamingRecognition = new StreamingRecognition();
+		streamingRecognition.createClient();
         responseObserver = new ResponseObserverClass();
         microphone = new Microphone();
+        microphone.setAudioFormat();
+        microphone.setTargetInfo();
         microphone.checkMicrophone();
+        microphone.setTargetDataLine();
 	}
 	
 	public Voice2Text(InsertHandler ih) throws Exception{
-		streamingRecognition = new StreamingRecognition(responseObserver);
+		streamingRecognition = new StreamingRecognition();
+		streamingRecognition.createClient();
         responseObserver = new ResponseObserverClass(ih);
         microphone = new Microphone();
+        microphone.setAudioFormat();
+        microphone.setTargetInfo();
         microphone.checkMicrophone();
+        microphone.setTargetDataLine();
 	}
 	
 	public void start() {
@@ -71,28 +82,5 @@ public class Voice2Text implements Runnable{
         streamingRecognition.closeSend();
         microphone.close();
 	}
-	
-	// For unit testing purposes
-	public StreamingRecognition getStreamingRecognition() {
-		return streamingRecognition;
-	}
-
-	public ResponseObserverClass getResponseObserver() {
-		return responseObserver;
-	}
-
-	public AudioInputStream getAudio() {
-		return audio;
-	}
-
-	public Microphone getMicrophone() {
-		return microphone;
-	}
-
-	public AtomicBoolean getRunning() {
-		return running;
-	}
-	
-	
 	
 }

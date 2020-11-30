@@ -16,43 +16,70 @@ public class Microphone {
 	private DataLine.Info targetInfo;
 	
 	public Microphone() throws Exception {
+		
+	}
+	
+	public AudioFormat setAudioFormat() {
         // SampleRate:16000Hz, SampleSizeInBits: 16, Number of channels: 1, Signed: true,
         // bigEndian: false
         // TODO some examples set bigEndian as true on Mac. strange
         audioFormat = new AudioFormat(sampleRate, sampleSizeInBits, numberOfChannels, signed, bigEndian);
+        return audioFormat;
+	}
+	
+	public Info setTargetInfo() {
         targetInfo =
                 new Info(
                     TargetDataLine.class,
                     audioFormat);
+        return targetInfo;
+	}
+
+	public TargetDataLine setTargetDataLine() throws Exception {
         // Target data line captures the audio stream the microphone produces.
         targetDataLine = (TargetDataLine) AudioSystem.getLine(targetInfo);
-		
+        return targetDataLine;
 	}
 	
-	public void checkMicrophone() {
+	public boolean checkMicrophone() {
 		if (!AudioSystem.isLineSupported(targetInfo)) {
           System.out.println("Microphone not supported");
           System.exit(0);
         }
+		return AudioSystem.isLineSupported(targetInfo);
 	}
 	
-	public void open() {
+	public boolean open() {
 		try {
 			targetDataLine.open(audioFormat);
-		} catch (LineUnavailableException e) {
+			return true;
+		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
 	
-	public void start() {
-        targetDataLine.start();
+	public boolean start() {
+		try {
+			targetDataLine.start();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	public AudioInputStream getAudio() {
 		return new AudioInputStream(targetDataLine);
 	}
 	
-	public void close() {
-        targetDataLine.close();
+	public boolean close() {
+		try {
+			targetDataLine.close();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 }
