@@ -1,6 +1,6 @@
 package edu.brown.cs.voice2text;
 
-import static edu.brown.cs.voice2text.AudioFormatConfiguration.*;
+import static edu.brown.cs.voice2text.config.AudioFormatConfiguration.*;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;

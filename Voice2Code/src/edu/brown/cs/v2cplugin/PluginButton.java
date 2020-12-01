@@ -1,4 +1,4 @@
-package voice2code.parts;
+package edu.brown.cs.v2cplugin;
 
 import java.net.URL;
 
@@ -22,7 +22,7 @@ import org.osgi.framework.FrameworkUtil;
 
 import edu.brown.cs.voice2text.Voice2Text;
 
-public class Voice2Code {
+public class PluginButton {
 	private Button button;
 	private boolean started;
 	private Voice2Text v2t;

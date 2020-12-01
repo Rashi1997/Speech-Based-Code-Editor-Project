@@ -1,4 +1,4 @@
-package voice2code.parts;
+package edu.brown.cs.v2cplugin;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.texteditor.*;
