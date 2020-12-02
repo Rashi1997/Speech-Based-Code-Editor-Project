@@ -22,10 +22,17 @@ public class StreamingRecognitionTest {
 		StreamingRecognition sr = new StreamingRecognition();
 		assertNotNull(sr);
 	}
-	
+
+	@Test
+	public void createSpeechContextTest() throws Exception{
+		StreamingRecognition sr = new StreamingRecognition();
+		boolean check = sr.createSpeechContext();
+		assertEquals(true, check);
+	}
 	@Test
 	public void setRecognitionConfigTest() throws Exception{
 		StreamingRecognition sr = new StreamingRecognition();
+		sr.createSpeechContext();
 		RecognitionConfig rc = sr.setRecognitionConfig();
 		assertNotNull(rc);
 	}
@@ -33,6 +40,7 @@ public class StreamingRecognitionTest {
 	@Test
 	public void setStreamingRecognitionTest() throws Exception{
 		StreamingRecognition sr = new StreamingRecognition();
+		sr.createSpeechContext();
 		sr.setRecognitionConfig();
 		StreamingRecognitionConfig src = sr.setStreamingRecognition();
 		assertNotNull(src);
@@ -41,6 +49,7 @@ public class StreamingRecognitionTest {
 	@Test
 	public void setStreamingConfigTest() throws Exception{
 		StreamingRecognition sr = new StreamingRecognition();
+		sr.createSpeechContext();
 		sr.setRecognitionConfig();
 		sr.setStreamingRecognition();
 		StreamingRecognizeRequest srr = sr.setStreamingConfig();
@@ -50,6 +59,7 @@ public class StreamingRecognitionTest {
 	@Test
 	public void setAudioContentTest() throws Exception{
 		StreamingRecognition sr = new StreamingRecognition();
+		sr.createSpeechContext();
 		sr.setRecognitionConfig();
 		sr.setStreamingRecognition();
 		int n =16;
@@ -81,6 +91,7 @@ public class StreamingRecognitionTest {
 	@Test
 	public void sendRequestTest() throws Exception{
 		StreamingRecognition sr = Mockito.mock(StreamingRecognition.class);
+		sr.createSpeechContext();
 		sr.setRecognitionConfig();
 		sr.setStreamingRecognition();
 		StreamingRecognizeRequest srr = sr.setStreamingConfig();

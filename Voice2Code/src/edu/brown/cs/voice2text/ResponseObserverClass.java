@@ -4,7 +4,8 @@ import com.google.api.gax.rpc.ResponseObserver;
 import com.google.api.gax.rpc.StreamController;
 import com.google.cloud.speech.v1p1beta1.StreamingRecognizeResponse;
 
-import voice2code.parts.InsertHandler;
+import edu.brown.cs.v2cplugin.InsertHandler;
+
 import java.util.StringTokenizer;
 
 public class ResponseObserverClass implements ResponseObserver<StreamingRecognizeResponse>{
@@ -36,7 +37,7 @@ public class ResponseObserverClass implements ResponseObserver<StreamingRecogniz
 			String token = st.nextToken();
 			System.out.println("Tokenize:" + token );
 		}
-		insertHandler.insertText(transcript);
+//		insertHandler.insertText(transcript);
 	}
 	
  	public String tokenize(String token)

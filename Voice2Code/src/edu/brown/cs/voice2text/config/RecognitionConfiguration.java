@@ -1,4 +1,4 @@
-package edu.brown.cs.voice2text;
+package edu.brown.cs.voice2text.config;
 
 import com.google.cloud.speech.v1p1beta1.RecognitionConfig;
 import com.google.cloud.speech.v1p1beta1.RecognitionConfig.AudioEncoding;
@@ -13,6 +13,7 @@ public final class RecognitionConfiguration {
     public static final String languageCode = "en-US";
     public static final String model = "default";
     public static final int sampleRateHertz = 16000;
+    public static final String contextLocation = "src/edu/brown/cs/voice2text/config/context.config";
     
     // Streaming Recognition Configuration
     public static final boolean interimResults = false;
