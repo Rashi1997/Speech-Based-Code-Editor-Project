@@ -2,7 +2,6 @@ package edu.brown.cs.voice2text;
 
 
 import static edu.brown.cs.voice2text.config.RecognitionConfiguration.*;
-import edu.brown.cs.voice2text.ConfigReader;
 import java.io.IOException;
 import java.util.List;
 

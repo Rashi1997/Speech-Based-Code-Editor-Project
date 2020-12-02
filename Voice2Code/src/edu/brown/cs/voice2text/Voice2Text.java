@@ -33,6 +33,7 @@ public class Voice2Text implements Runnable{
 	public Voice2Text(InsertHandler ih) throws Exception{
 		streamingRecognition = new StreamingRecognition();
 		streamingRecognition.createClient();
+		streamingRecognition.createSpeechContext();
         responseObserver = new ResponseObserverClass(ih);
         microphone = new Microphone();
         microphone.setAudioFormat();
