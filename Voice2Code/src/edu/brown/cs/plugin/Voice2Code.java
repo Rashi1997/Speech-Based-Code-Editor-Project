@@ -1,4 +1,4 @@
-package edu.brown.cs.v2cplugin;
+package edu.brown.cs.plugin;
 
 import java.net.URL;
 
@@ -22,18 +22,16 @@ import org.osgi.framework.FrameworkUtil;
 
 import edu.brown.cs.voice2text.Voice2Text;
 
-public class PluginButton {
+public class Voice2Code {
 	private Button button;
 	private boolean started;
 	private Voice2Text v2t;
-	private InsertHandler ih;
 	
 	@PostConstruct
 	public void createPartControl(Composite parent) throws Exception {
-		ih = new InsertHandler();
 		
 		System.out.println("Enter in Button postConstruct");
-		v2t = new Voice2Text(ih);
+		v2t = new Voice2Text();
 		
 		parent.setLayout(new FillLayout());
 		

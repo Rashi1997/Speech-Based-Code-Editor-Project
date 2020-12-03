@@ -4,17 +4,17 @@ import com.google.api.gax.rpc.ResponseObserver;
 import com.google.api.gax.rpc.StreamController;
 import com.google.cloud.speech.v1p1beta1.StreamingRecognizeResponse;
 
-import edu.brown.cs.v2cplugin.InsertHandler;
+import edu.brown.cs.plugin.editor.Handler;
 
 import java.util.StringTokenizer;
 
 public class ResponseObserverClass implements ResponseObserver<StreamingRecognizeResponse>{
-	private InsertHandler insertHandler;
+	private Handler insertHandler;
 	//public String transcript;
 	public ResponseObserverClass() {
 	}
 	
-	public ResponseObserverClass(InsertHandler ih) {
+	public ResponseObserverClass(Handler ih) {
 		insertHandler = ih;
 	}
 	

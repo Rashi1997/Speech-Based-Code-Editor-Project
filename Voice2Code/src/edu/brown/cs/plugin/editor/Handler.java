@@ -1,4 +1,4 @@
-package edu.brown.cs.v2cplugin;
+package edu.brown.cs.plugin.editor;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.texteditor.*;
@@ -10,8 +10,8 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
-public class InsertHandler {
-	public InsertHandler() {}
+public class Handler {
+	public Handler() {}
 	
 	public void insertText(String text) {
 		Display.getDefault().syncExec(new Runnable() {
@@ -49,6 +49,38 @@ public class InsertHandler {
 			}
 			
 		});
+	}
+	
+	public void moveCursorUp() {
+		
+	}
+	
+	public void moveCursorDown() {
+		
+	}
+	
+	public void moveCursorRight() {
+		
+	}
+	
+	public void moveCursorLeft() {
+		
+	}
+	
+	public void moveCursorToEndOfLine() {
+		
+	}
+	
+	public void moveCursorToStartOfLine() {
+		
+	}
+	
+	public void moveCursorToBeginningOfFile() {
+		
+	}
+	
+	public void moveCursorToEndOfFile() {
+		
 	}
 }
 	
