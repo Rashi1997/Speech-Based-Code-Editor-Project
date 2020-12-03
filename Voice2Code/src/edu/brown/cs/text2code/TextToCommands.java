@@ -287,6 +287,7 @@ public class TextToCommands {
 			removeFirstN(keyword.size(), words);
 			// TODO: call a function to write this to screen
 			System.out.println(keywords.get(keywordString));
+			
 			return true;
 		} else {
 			return false;
@@ -353,6 +354,7 @@ public class TextToCommands {
 	// Called at end of sentence
 	public void process(List<String> words) {
 		System.out.println("Processing: ");
+		printList(words);
 
 		while (words.size() > 0) {
 			//printList(words);
@@ -365,6 +367,8 @@ public class TextToCommands {
 			}
 			else {
 				// regular word
+				System.out.println("reg word");
+				editorHandler.insertText(words.get(0));
 				System.out.println(words.get(0));
 				removeFirstN(1, words);
 			}
