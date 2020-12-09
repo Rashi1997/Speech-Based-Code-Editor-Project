@@ -64,6 +64,29 @@ public class InsertHandler {
 						String textAfter = textAtLine.substring(lineOffset);
 						System.out.println(moveForward(textAfter));
 			            styledText.setCaretOffset(offset + moveForward(textAfter));
+					} else if ("left".equals(roc.tokenize(text))){
+						int newOffset = Integer.max(0, offset - 1);
+			            styledText.setCaretOffset(newOffset);
+			            
+					} else if("right".equals(roc.tokenize(text)))
+					{
+						int newOffset = Integer.min(styledText.getCharCount(), offset + 1);
+			            styledText.setCaretOffset(newOffset);
+					} else if("line".equals(roc.tokenize(text)))
+					{
+						styledText.setSelection(styledText.getCharCount());
+						
+						int lineToGoTo = 5;
+						lineToGoTo = Integer.min(lineToGoTo, styledText.getLineCount());
+						System.out.println(styledText.getLineCount());
+						lineToGoTo = Integer.max(lineToGoTo, 0);
+			            int lineOffset = getOffsetOfLine(lineToGoTo, document);
+			            styledText.setCaretOffset(lineOffset);
+					}
+					
+					
+					else if (roc.tokenize(text) != null) {
+						System.out.println("x: " + text);
 					}
 					
 				} catch (Exception e) {
@@ -85,6 +108,14 @@ public class InsertHandler {
         	sum += doc.getLineLength(i);
         }
         return offset - sum;
+	}
+	
+	private int getOffsetOfLine(int lineNumber,IDocument doc) throws BadLocationException {
+		int sum = 0;
+        for (int i = 0 ; i < lineNumber; i++) {
+        	sum += doc.getLineLength(i);
+        }
+        return sum;
 	}
 	
 	// Returns offset of last word
