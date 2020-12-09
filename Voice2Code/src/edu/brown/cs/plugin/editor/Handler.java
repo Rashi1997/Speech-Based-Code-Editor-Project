@@ -17,6 +17,7 @@ public class Handler {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
+				System.out.println("Inserting text: " + text);
 			  	IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			  	IWorkbenchPage workbenchPage = iw.getActivePage();
 				IEditorPart part = workbenchPage.getActiveEditor();
@@ -29,16 +30,8 @@ public class Handler {
 				int offset = styledText.getCaretOffset();
 				ResponseObserverClass roc = new ResponseObserverClass();
 				try {
-					if("down".equals(roc.tokenize(text)))
-					{
-						document.replace(offset, 0, text.replace("down", ";"));
-						styledText.setSelection(styledText.getCharCount());
-						int currentLine = styledText.getLineAtOffset(styledText.getCaretOffset());
-			            String textAtLine = styledText.getLine(currentLine);
-			            //int spaces = getLeadingSpaces(textAtLine);
-			            styledText.insert("\n");
-			            styledText.setCaretOffset(styledText.getCaretOffset());
-					}
+					document.replace(offset, 0, text);
+					styledText.setSelection(styledText.getCharCount());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
