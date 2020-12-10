@@ -28,10 +28,8 @@ public class Voice2TextTest {
 	
 	@Test
 	public void ROCNotNullTest() {
-		ResponseObserverClass ro2 = new ResponseObserverClass();
-		ResponseObserverClass ro = new ResponseObserverClass(null);
+		ResponseObserverClass ro = new ResponseObserverClass();
 		assertNotNull(ro);
-		assertNotNull(ro2);
 	}
 	
 //	@Test

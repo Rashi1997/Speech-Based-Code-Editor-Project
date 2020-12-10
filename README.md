@@ -32,7 +32,18 @@ Confidence: 0.95554876
 Final: true
 ```
 
-
+## Directory Structure
+```bash
+├── Voice2Code
+│   └── src
+│       ├── edu.brown.cs
+│       │      └── plugin
+│       │           ├── Voice2Code.java (Eclipse plugin's source)
+│       │           └── editor (Helper methods for manipulating the editor)
+|       ├── text2code (Converts text to code)
+│       ├── voice2text (Interacts with Google Speech-to-text API)
+│       └── test (Unit tests)
+```
 
 
 

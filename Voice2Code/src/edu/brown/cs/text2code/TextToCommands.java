@@ -9,7 +9,6 @@ import java.util.Set;
 
 import edu.brown.cs.plugin.editor.Handler;
 
-
 public class TextToCommands {
 
 
@@ -363,10 +362,9 @@ public class TextToCommands {
 				continue;
 			}  else if(checkForDeclarations(words)) {
 				continue;
-			}
-			else {
+			} else {
 				// regular word
-				System.out.println(words.get(0));
+				editorHandler.insertText(words.get(0));
 				removeFirstN(1, words);
 			}
 		}

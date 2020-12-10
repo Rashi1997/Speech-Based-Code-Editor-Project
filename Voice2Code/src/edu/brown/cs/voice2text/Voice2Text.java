@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.sound.sampled.AudioInputStream;
-
-
 import com.google.cloud.speech.v1p1beta1.StreamingRecognizeRequest;
 
 import edu.brown.cs.plugin.editor.Handler;
@@ -22,18 +20,6 @@ public class Voice2Text implements Runnable{
 		streamingRecognition.createClient();
 		streamingRecognition.createSpeechContext();
         responseObserver = new ResponseObserverClass();
-        microphone = new Microphone();
-        microphone.setAudioFormat();
-        microphone.setTargetInfo();
-        microphone.checkMicrophone();
-        microphone.setTargetDataLine();
-	}
-	
-	public Voice2Text(Handler ih) throws Exception{
-		streamingRecognition = new StreamingRecognition();
-		streamingRecognition.createClient();
-		streamingRecognition.createSpeechContext();
-        responseObserver = new ResponseObserverClass(ih);
         microphone = new Microphone();
         microphone.setAudioFormat();
         microphone.setTargetInfo();

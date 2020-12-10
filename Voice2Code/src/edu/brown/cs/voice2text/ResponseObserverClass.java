@@ -5,17 +5,19 @@ import com.google.api.gax.rpc.StreamController;
 import com.google.cloud.speech.v1p1beta1.StreamingRecognizeResponse;
 
 import edu.brown.cs.plugin.editor.Handler;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.StringTokenizer;
 
+import edu.brown.cs.text2code.*;
+
 public class ResponseObserverClass implements ResponseObserver<StreamingRecognizeResponse>{
-	private Handler insertHandler;
-	//public String transcript;
-	public ResponseObserverClass() {
-	}
 	
-	public ResponseObserverClass(Handler ih) {
-		insertHandler = ih;
+	private TextToCommands textToCommandHandler;
+	
+	public ResponseObserverClass() {
+		textToCommandHandler = new TextToCommands();
 	}
 	
 
@@ -31,13 +33,8 @@ public class ResponseObserverClass implements ResponseObserver<StreamingRecogniz
 		String transcript = ((StreamingRecognizeResponse) response).getResults(0).getAlternatives(0).getTranscript();
 		System.out.println("Transcript: " + transcript);
 		System.out.println("Confidence: " + ((StreamingRecognizeResponse) response).getResults(0).getAlternatives(0).getConfidence());
-		System.out.println("Final: " + ((StreamingRecognizeResponse) response).getResults(0).getIsFinal());
-		StringTokenizer st = new StringTokenizer(transcript);
-		while (st.hasMoreTokens()) {  
-			String token = st.nextToken();
-			System.out.println("Tokenize:" + token );
-		}
-//		insertHandler.insertText(transcript);
+		List<String> wordList = new ArrayList<String>(Arrays.asList(transcript.split(" ")));
+		textToCommandHandler.process(wordList);
 	}
 	
  	public String tokenize(String token)
