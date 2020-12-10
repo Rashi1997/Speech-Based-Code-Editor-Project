@@ -15,9 +15,13 @@ Require-Bundle: javax.inject,
  org.eclipse.text;bundle-version="3.10.0",
  org.eclipse.ui.workbench.texteditor;bundle-version="3.14.0",
  org.eclipse.core.runtime;bundle-version="3.19.0",
- org.eclipse.jface.text;bundle-version="3.16.400"
+ org.eclipse.jface.text;bundle-version="3.16.400",
+ org.junit,
+ org.junit.jupiter.api,
+ net.i2p.crypto.eddsa;bundle-version="0.3.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Import-Package: javax.annotation;version="1.2.0"
 Automatic-Module-Name: voice2code
 Bundle-ClassPath: bin/,
- lib/voice2text-dependencies.jar
+ lib/voice2text-dependencies.jar,
+ lib/mockito-all-2.0.2-beta.jar

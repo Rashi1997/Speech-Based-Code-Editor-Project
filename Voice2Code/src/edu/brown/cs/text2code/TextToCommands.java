@@ -14,7 +14,7 @@ public class TextToCommands {
 
 	// Store key words
 	Map<String, String> keywords = new HashMap<String, String>();
-	Set<String> commands = new HashSet<String>();
+	public Set<String> commands = new HashSet<String>();
 	Map<String, Runnable> commandsToFuncs = new HashMap<String, Runnable>();
 	Set<String> termDeclarators = new HashSet<String>();
 	int maxCommandLength;

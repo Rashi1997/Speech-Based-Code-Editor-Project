@@ -6,6 +6,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.sound.sampled.AudioInputStream;
 import com.google.cloud.speech.v1p1beta1.StreamingRecognizeRequest;
 
+import edu.brown.cs.plugin.editor.Handler;
+
 public class Voice2Text implements Runnable{
 	private StreamingRecognition streamingRecognition;
 	private ResponseObserverClass responseObserver;
@@ -14,10 +16,15 @@ public class Voice2Text implements Runnable{
 	private Microphone microphone;
 	
 	public Voice2Text() throws Exception{
-		streamingRecognition = new StreamingRecognition(responseObserver);
+		streamingRecognition = new StreamingRecognition();
+		streamingRecognition.createClient();
+		streamingRecognition.createSpeechContext();
         responseObserver = new ResponseObserverClass();
         microphone = new Microphone();
+        microphone.setAudioFormat();
+        microphone.setTargetInfo();
         microphone.checkMicrophone();
+        microphone.setTargetDataLine();
 	}
 	
 	public void start() {
@@ -62,4 +69,5 @@ public class Voice2Text implements Runnable{
         streamingRecognition.closeSend();
         microphone.close();
 	}
+	
 }

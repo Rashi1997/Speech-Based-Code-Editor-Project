@@ -1,9 +1,12 @@
-package edu.brown.cs;
+package edu.brown.cs.text2code.tests;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import edu.brown.cs.text2code.TextToCommands;
+
 import java.util.List;
 import java.util.ArrayList;
 

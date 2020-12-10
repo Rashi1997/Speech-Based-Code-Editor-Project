@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="ASCII"?>
 <fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmi:id="_BxaXACerEeWxCPrV0pAZQQ">
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_EI7oACerEeWxCPrV0pAZQQ" featurename="descriptors" parentElementId="xpath:/">
-    <elements xsi:type="basic:PartDescriptor" xmi:id="_KMklcCerEeWxCPrV0pAZQQ" elementId="test.partDescFragment.ASampleE4View" label="Voice 2 Code" iconURI="platform:/plugin/voice2code/icons/Sample.png" tooltip="" category="Voice 2 Code" contributionURI="bundleclass://voice2code/edu.brown.cs.plugin.Voice2Code">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_KMklcCerEeWxCPrV0pAZQQ" elementId="test.partDescFragment.ASampleE4View" label="Voice2Code" iconURI="platform:/plugin/voice2code/icons/Sample.png" tooltip="" category="Voice2Code" contributionURI="bundleclass://voice2code/edu.brown.cs.plugin.Voice2Code">
       <tags>View</tags>
-      <tags>categoryTag:Voice 2 Code</tags>
+      <tags>categoryTag:Voice2Code</tags>
     </elements>
   </fragments>
 </fragment:ModelFragments>
