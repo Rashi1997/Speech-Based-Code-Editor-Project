@@ -65,11 +65,54 @@ public class Handler {
 	}
 	
 	public void moveCursorToEndOfLine() {
-		
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+			  	IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			  	IWorkbenchPage workbenchPage = iw.getActivePage();
+				IEditorPart part = workbenchPage.getActiveEditor();
+				ITextEditor editor = (ITextEditor)part;
+				IDocumentProvider dp = editor.getDocumentProvider();
+				IDocument document = dp.getDocument(editor.getEditorInput());
+				
+				Control control = editor.getAdapter(Control.class);
+				StyledText styledText = (StyledText) control;
+				int offset = styledText.getCaretOffset();
+				
+				System.out.println("offset: " + offset);
+				int lineNumber = styledText.getLineAtOffset(offset);
+				System.out.println("Line number: " + lineNumber);
+				int lineEndOffset = styledText.getOffsetAtLine(lineNumber) + styledText.getLine(lineNumber).length();
+				styledText.setCaretOffset(lineEndOffset);
+				System.out.println("Set caret offset to end of line");
+			}
+			
+		});
 	}
 	
 	public void moveCursorToStartOfLine() {
-		
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+			  	IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			  	IWorkbenchPage workbenchPage = iw.getActivePage();
+				IEditorPart part = workbenchPage.getActiveEditor();
+				ITextEditor editor = (ITextEditor)part;
+				IDocumentProvider dp = editor.getDocumentProvider();
+				IDocument document = dp.getDocument(editor.getEditorInput());
+				
+				Control control = editor.getAdapter(Control.class);
+				StyledText styledText = (StyledText) control;
+				int offset = styledText.getCaretOffset();
+				
+				System.out.println("offset: " + offset);
+				int lineNumber = styledText.getLineAtOffset(offset);
+				System.out.println("Line number: " + lineNumber);
+				styledText.setCaretOffset(styledText.getOffsetAtLine(lineNumber));
+				System.out.println("Set caret offset to start of line");
+			}
+			
+		});
 	}
 	
 	public void moveCursorToBeginningOfFile() {
