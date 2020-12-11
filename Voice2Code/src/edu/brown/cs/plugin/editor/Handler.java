@@ -75,6 +75,7 @@ public class Handler {
 	public void moveCursorToEndOfFile() {
 		
 	}
+	
 }
 	
 //	private void moveCursorToLineNumber(int lineNumber) {
