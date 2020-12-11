@@ -245,7 +245,7 @@ public class TextToCommands {
 					break;
 				case "next line" :
 					// Move cursor up one line
-					
+					editorHandler.moveCursorToNextLine();
 					break;
 				case "start line":
 					// Move cursor to start of line

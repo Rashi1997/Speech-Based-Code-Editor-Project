@@ -60,6 +60,10 @@ public class Handler {
 		
 	}
 	
+	public void moveCursorToNextLine() {
+		
+	}
+	
 	public void moveCursorToEndOfLine() {
 		
 	}
