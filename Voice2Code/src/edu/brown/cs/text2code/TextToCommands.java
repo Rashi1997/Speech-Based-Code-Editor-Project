@@ -57,6 +57,7 @@ public class TextToCommands {
 		keywords.put("string", "String");
 		keywords.put("print", "System.out.println(");
 		keywords.put("main function", "public static void main(String[] args) {");
+		keywords.put("equals", "=");
 		
 	}
 
@@ -68,9 +69,14 @@ public class TextToCommands {
 		// TODO: add more, just testing with a few for now
 		commands.add("up");
 		commands.add("down");
+		commands.add("end line");
 		commands.add("next line");
-		commands.add("left");
+		commands.add("start line");
+		commands.add("end file");
+		commands.add("start file");
 		commands.add("right");
+		commands.add("left");
+		commands.add("declare var");
 		commands.add("forward word");
 		commands.add("backward word");
 	}
@@ -81,10 +87,13 @@ public class TextToCommands {
 
 	*/
 	private void intiliazeDeclarators() {
-
-		termDeclarators.add("declare var");
-		termDeclarators.add("declare normal var");
-		termDeclarators.add("declare caps var");
+		
+		// Modified
+		termDeclarators.add("variable");
+		termDeclarators.add("normal variable");
+		// aliases
+		termDeclarators.add("capital variable");
+		termDeclarators.add("capitol variable");
 	}
 
 	/**
@@ -177,11 +186,12 @@ public class TextToCommands {
   /* Match terms with the beginning of s */
 	public List<String> matchTerm(List<String> s, Set<String> terms) {
 		int largestTermLength = Integer.min(getLargestInSet(terms), s.size());
-		for (int i = largestTermLength; i > 1; i--) {
+		for (int i = largestTermLength; i >= 1; i--) {
 			String currString = getFirstNAsString(i, s);
 			List<String> current = getFirstN(i, s);
 			// Check for match
 			if (terms.contains(currString)) {
+				System.out.println("Matched with: " + currString);
 				return current;
 			}
 		}
@@ -210,13 +220,13 @@ public class TextToCommands {
 	}
 
 
- public void removeFirstN(int n, List<String> words) {
-	 assert(n <= words.size());
-	 for (int i = 0; i < n; i++) {
-		 words.remove(0);
-	 	}
- }
-
+	public void removeFirstN(int n, List<String> words) {
+		assert(n <= words.size());
+		for (int i = 0; i < n; i++) {
+			words.remove(0);
+		}
+	}
+	
 	public boolean checkForCommand(List<String> words) {
 		// iterate over the words, matching for commands
 		List<String> command = matchTerm(words, commands);
@@ -227,6 +237,7 @@ public class TextToCommands {
 			switch (commandString) {
 				case "up" :
 					// Move cursor up one line
+					System.out.println("calling up");
 					editorHandler.moveCursorUp();
 					break;
 				case "down":
@@ -239,7 +250,7 @@ public class TextToCommands {
 					break;
 				case "next line" :
 					// Move cursor up one line
-					
+					editorHandler.moveCursorToNextLine();
 					break;
 				case "start line":
 					// Move cursor to start of line
@@ -285,9 +296,7 @@ public class TextToCommands {
 		if (keyword != null) {
 			String keywordString = getFirstNAsString(keyword.size(), words);
 			removeFirstN(keyword.size(), words);
-			// TODO: call a function to write this to screen
-			System.out.println(keywords.get(keywordString));
-			
+			editorHandler.insertText(keywords.get(keywordString));
 			return true;
 		} else {
 			return false;
@@ -303,9 +312,9 @@ public class TextToCommands {
 		if (words.size() < 2) {
 			throw new InvalidCommandException("A declaration was not followed by 'end declare'");
 		}
-		while(words.size() >= 2) {
-			if (words.get(0).equals("end") && words.get(1).equals("declare")) {
-				removeFirstN(2, words);
+		while(words.size() >= 1) {
+			if (words.get(0).equals("complete")) { // changed: often mistakes "end" for "and"
+				removeFirstN(1, words);
 				return result;
 			} else {
 				result.add(words.get(0));
@@ -324,15 +333,19 @@ public class TextToCommands {
 			removeFirstN(declarator.size(), words);
 			List<String> var = buildVariable(words);
 			switch (declaratorString) {
-				case "declare var":
-					System.out.println(getVariableString(var));
+				// Modified
+				case "variable":
+					editorHandler.insertText(getVariableString(var));
 					break;
-				case "declare normal var":
-					System.out.println(getNormalCase(var));
-				  break;
-				case "declare caps var":
-				System.out.println(getAllCapsString(var));
-				  break;
+				case "normal variable":
+					editorHandler.insertText(getNormalCase(var));
+					break;
+				case "capital variable":
+					editorHandler.insertText(getAllCapsString(var));
+					break;
+				case "capitol variable":  
+					editorHandler.insertText(getAllCapsString(var));
+					break;
 				default:
 					break;
 			}
@@ -349,11 +362,21 @@ public class TextToCommands {
 		}
 		System.out.println();
 	}
+	
+	private List<String> makeLowerCase(List<String> words) {
+		List<String> lowerCaseWords = new ArrayList<String>();
+		for (int i = 0; i < words.size(); i++) {
+			lowerCaseWords.add(words.get(i).toLowerCase());
+		}
+		return lowerCaseWords;
+	}
 
 	// Process the current words into commands
 	// Called at end of sentence
 	public void process(List<String> words) {
 		System.out.println("Processing: ");
+		words = makeLowerCase(words);
+		
 		printList(words);
 
 		while (words.size() > 0) {
@@ -364,12 +387,9 @@ public class TextToCommands {
 				continue;
 			}  else if(checkForDeclarations(words)) {
 				continue;
-			}
-			else {
+			} else {
 				// regular word
-				System.out.println("reg word");
 				editorHandler.insertText(words.get(0));
-				System.out.println(words.get(0));
 				removeFirstN(1, words);
 			}
 		}

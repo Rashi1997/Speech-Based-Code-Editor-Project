@@ -18,6 +18,7 @@ public class Handler {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
+				System.out.println("Inserting text: " + text);
 			  	IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			  	IWorkbenchPage workbenchPage = iw.getActivePage();
 				IEditorPart part = workbenchPage.getActiveEditor();
@@ -30,16 +31,9 @@ public class Handler {
 				int offset = styledText.getCaretOffset();
 				ResponseObserverClass roc = new ResponseObserverClass();
 				try {
-					//if("down".equals(roc.tokenize(text)))
-					//{
-						document.replace(offset, 0, text.replace("down", ";"));
-						styledText.setSelection(styledText.getCharCount());
-						int currentLine = styledText.getLineAtOffset(styledText.getCaretOffset());
-			            String textAtLine = styledText.getLine(currentLine);
-			            //int spaces = getLeadingSpaces(textAtLine);
-			            styledText.insert("\n");
-			            styledText.setCaretOffset(styledText.getCaretOffset());
-					//}
+
+					document.replace(offset, 0, text);
+					styledText.setSelection(styledText.getCharCount());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -53,6 +47,7 @@ public class Handler {
 	}
 	
 	public void moveCursorUp() {
+		System.out.println("meme");
 		
 	}
 	
@@ -109,12 +104,59 @@ public class Handler {
         styledText.setCaretOffset(offset + moveBack(textBefore));*/
 	}
 	
-	public void moveCursorToEndOfLine() {
+	public void moveCursorToNextLine() {
 		
 	}
 	
+	public void moveCursorToEndOfLine() {
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+			  	IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			  	IWorkbenchPage workbenchPage = iw.getActivePage();
+				IEditorPart part = workbenchPage.getActiveEditor();
+				ITextEditor editor = (ITextEditor)part;
+				IDocumentProvider dp = editor.getDocumentProvider();
+				IDocument document = dp.getDocument(editor.getEditorInput());
+				
+				Control control = editor.getAdapter(Control.class);
+				StyledText styledText = (StyledText) control;
+				int offset = styledText.getCaretOffset();
+				
+				System.out.println("offset: " + offset);
+				int lineNumber = styledText.getLineAtOffset(offset);
+				System.out.println("Line number: " + lineNumber);
+				int lineEndOffset = styledText.getOffsetAtLine(lineNumber) + styledText.getLine(lineNumber).length();
+				styledText.setCaretOffset(lineEndOffset);
+				System.out.println("Set caret offset to end of line");
+			}
+			
+		});
+	}
+	
 	public void moveCursorToStartOfLine() {
-		
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+			  	IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			  	IWorkbenchPage workbenchPage = iw.getActivePage();
+				IEditorPart part = workbenchPage.getActiveEditor();
+				ITextEditor editor = (ITextEditor)part;
+				IDocumentProvider dp = editor.getDocumentProvider();
+				IDocument document = dp.getDocument(editor.getEditorInput());
+				
+				Control control = editor.getAdapter(Control.class);
+				StyledText styledText = (StyledText) control;
+				int offset = styledText.getCaretOffset();
+				
+				System.out.println("offset: " + offset);
+				int lineNumber = styledText.getLineAtOffset(offset);
+				System.out.println("Line number: " + lineNumber);
+				styledText.setCaretOffset(styledText.getOffsetAtLine(lineNumber));
+				System.out.println("Set caret offset to start of line");
+			}
+			
+		});
 	}
 	
 	public void moveCursorToBeginningOfFile() {
