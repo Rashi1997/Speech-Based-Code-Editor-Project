@@ -40,6 +40,7 @@ public class TextToCommands {
 		keywords.put("space", " ");
 		keywords.put("open parenthesis", "(");
 		keywords.put("close parenthesis", ")");
+		keywords.put("equals", "=");
 		keywords.put("plus", "+");
 		keywords.put("minus", "-");
 		keywords.put("divide", "/");
@@ -85,6 +86,7 @@ public class TextToCommands {
 		commands.add("back");
 		commands.add("duck"); // back may be heard as this
 		commands.add("go to");
+		commands.add("compile");
 	}
 	
 	
@@ -318,6 +320,8 @@ public class TextToCommands {
 					break;
 				case "go to":
 					handleGoToCommand(words);
+				case "compile":
+					editorHandler.compile();
 					break;
 				default:
 					System.out.println("no match");
