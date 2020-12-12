@@ -40,6 +40,7 @@ public class TextToCommands {
 		keywords.put("space", " ");
 		keywords.put("open parenthesis", "(");
 		keywords.put("close parenthesis", ")");
+		keywords.put("equals", "=");
 		keywords.put("plus", "+");
 		keywords.put("minus", "-");
 		keywords.put("divide", "/");
@@ -78,6 +79,7 @@ public class TextToCommands {
 		commands.add("declare var");
 		commands.add("forward word");
 		commands.add("backward word");
+		commands.add("compile");
 	}
 
   /*
@@ -266,6 +268,9 @@ public class TextToCommands {
 				case "left":
 					// Move cursor one word left
 					editorHandler.moveCursorLeft();
+					break;
+				case "compile":
+					editorHandler.compile();
 					break;
 				case "declare var":
 					// Concatenation methods
