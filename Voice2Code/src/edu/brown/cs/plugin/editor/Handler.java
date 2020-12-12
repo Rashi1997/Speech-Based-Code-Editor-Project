@@ -47,7 +47,6 @@ public class Handler {
 	}
 	
 	public void moveCursorUp() {
-		System.out.println("meme");
 		
 	}
 	
@@ -55,8 +54,7 @@ public class Handler {
 		
 	}
 	
-	// Moves right one word
-	public void moveCursorRight() {
+	public void moveCursorOneCharRight() {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
 			public void run() {
@@ -70,38 +68,31 @@ public class Handler {
 				Control control = editor.getAdapter(Control.class);
 				StyledText styledText = (StyledText) control;
 				int offset = styledText.getCaretOffset();
-				ResponseObserverClass roc = new ResponseObserverClass();
-				try {
-					styledText.setSelection(styledText.getCharCount());
-					int currentLine = styledText.getLineAtOffset(styledText.getCaretOffset());
-			        currentLine = Integer.max(0, currentLine - 1);
-			        int lineOffset = getOffsetWithinLine(currentLine, offset, document);
-					String textAtLine = styledText.getLine(currentLine);
-					String textAfter = textAtLine.substring(lineOffset);
-					System.out.println(moveForward(textAfter));
-			        styledText.setCaretOffset(offset + moveForward(textAfter));
-					
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				int newOffset = Integer.min(styledText.getCharCount(), offset);
+	            styledText.setCaretOffset(newOffset); // TODO: not sure why don't need +1
 			}
 		});
 	}
 	
 	// Moves left one word
-	public void moveCursorLeft() {
-		/*
-		System.out.println("orig " + offset);
-		styledText.setSelection(styledText.getCharCount());
-		int currentLine = styledText.getLineAtOffset(styledText.getCaretOffset());
-        currentLine = Integer.max(0, currentLine - 1);
-        int lineOffset = getOffsetWithinLine(currentLine, offset, document);
-		String textAtLine = styledText.getLine(currentLine);
-		String textBefore = textAtLine.substring(0, lineOffset);
-		System.out.println(moveBack(textBefore));
-		System.out.println(offset);
-		System.out.println(offset + moveBack(textBefore));
-        styledText.setCaretOffset(offset + moveBack(textBefore));*/
+	public void moveCursorOneCharLeft() {
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+			  	IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			  	IWorkbenchPage workbenchPage = iw.getActivePage();
+				IEditorPart part = workbenchPage.getActiveEditor();
+				ITextEditor editor = (ITextEditor)part;
+				IDocumentProvider dp = editor.getDocumentProvider();
+				IDocument document = dp.getDocument(editor.getEditorInput());
+				
+				Control control = editor.getAdapter(Control.class);
+				StyledText styledText = (StyledText) control;
+				int offset = styledText.getCaretOffset();
+				int newOffset = Integer.max(0, offset - 2);
+	            styledText.setCaretOffset(newOffset); // TODO: not sure why need -2
+			}
+		});
 	}
 	
 	public void moveCursorToNextLine() {
@@ -167,12 +158,128 @@ public class Handler {
 		
 	}
 	
+	
+	public void moveOneWordRight() {
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+			  	IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			  	IWorkbenchPage workbenchPage = iw.getActivePage();
+				IEditorPart part = workbenchPage.getActiveEditor();
+				ITextEditor editor = (ITextEditor)part;
+				IDocumentProvider dp = editor.getDocumentProvider();
+				IDocument document = dp.getDocument(editor.getEditorInput());
+				
+				Control control = editor.getAdapter(Control.class);
+				StyledText styledText = (StyledText) control;
+				int offset = styledText.getCaretOffset();
+				
+				styledText.setSelection(styledText.getCharCount());
+				int currentLine = styledText.getLineAtOffset(styledText.getCaretOffset());
+		        currentLine = Integer.max(0, currentLine - 1);
+		        int lineOffset;
+				try {
+					lineOffset = getOffsetWithinLine(currentLine, offset, document);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return;
+				}
+				String textAtLine = styledText.getLine(currentLine);
+				String textAfter = textAtLine.substring(lineOffset - 1);// TODO: not sure why -1
+				System.out.println(moveForward(textAfter));
+		        styledText.setCaretOffset(offset + moveForward(textAfter) - 1); // Not sure why - 1
+			}
+			
+		});
+	
+	}
+	
+	public void moveOneWordLeft() {
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+			  	IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			  	IWorkbenchPage workbenchPage = iw.getActivePage();
+				IEditorPart part = workbenchPage.getActiveEditor();
+				ITextEditor editor = (ITextEditor)part;
+				IDocumentProvider dp = editor.getDocumentProvider();
+				IDocument document = dp.getDocument(editor.getEditorInput());
+				
+				Control control = editor.getAdapter(Control.class);
+				StyledText styledText = (StyledText) control;
+				int offset = styledText.getCaretOffset();
+				
+				styledText.setSelection(styledText.getCharCount());
+				int currentLine = styledText.getLineAtOffset(styledText.getCaretOffset());
+		        currentLine = Integer.max(0, currentLine - 1);
+		        int lineOffset;
+				try {
+					lineOffset = getOffsetWithinLine(currentLine, offset, document);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return;
+				}
+				String textAtLine = styledText.getLine(currentLine);
+				String textBefore = textAtLine.substring(0, lineOffset - 1); // TODO: bugging without -1
+				System.out.println("BEFORE: " + textBefore);
+				System.out.println(moveBack(textBefore));
+				System.out.println(offset);
+				System.out.println(offset + moveBack(textBefore));
+		        styledText.setCaretOffset(offset + moveBack(textBefore) -1); // TODO: bugging without -1
+			}
+			
+		});
+	}
+		
+		public void goToLine(int lineNum) {
+			Display.getDefault().syncExec(new Runnable() {
+				@Override
+				public void run() {
+				  	IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				  	IWorkbenchPage workbenchPage = iw.getActivePage();
+					IEditorPart part = workbenchPage.getActiveEditor();
+					ITextEditor editor = (ITextEditor)part;
+					IDocumentProvider dp = editor.getDocumentProvider();
+					IDocument document = dp.getDocument(editor.getEditorInput());
+					
+					Control control = editor.getAdapter(Control.class);
+					StyledText styledText = (StyledText) control;
+					int offset = styledText.getCaretOffset();
+					
+					styledText.setSelection(styledText.getCharCount());
+					int num = lineNum - 1; // User will say what they want based on 1-indexing
+				    num = Integer.min(num, styledText.getLineCount());
+					System.out.println(styledText.getLineCount());
+					num = Integer.max(num, 0);
+		            int lineOffset;
+					try {
+						lineOffset = getOffsetOfLine(num, document);
+					} catch (BadLocationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						return;
+					}
+		            styledText.setCaretOffset(lineOffset);
+				
+			}});
+		}
+	
 	private int getOffsetWithinLine(int lineNumber, int offset, IDocument doc) throws BadLocationException {
 		int sum = 0;
         for (int i = 0 ; i < lineNumber; i++) {
         	sum += doc.getLineLength(i);
         }
         return offset - sum;
+	}
+	
+	private int getOffsetOfLine(int lineNumber,IDocument doc) throws BadLocationException {
+		int sum = 0;
+        for (int i = 0 ; i < lineNumber; i++) {
+        	sum += doc.getLineLength(i);
+        }
+        return sum;
 	}
 	
 	// Returns offset of last word
@@ -202,30 +309,30 @@ public class Handler {
 		}
 		
 		// Returns offset of next word
-				private int moveForward(String text) {
-					
-					int index = 0;
-					int start = index;
-					// Move forward past any letters/nums
-					while (index < text.length()) {
-						char c = text.charAt(index);
-						if (Character.isDigit(c) || Character.isLetter(c)) {
-							index++;
-						} else {
-							break;
-						}
+			private int moveForward(String text) {
+				
+				int index = 0;
+				int start = index;
+				// Move forward past any letters/nums
+				while (index < text.length()) {
+					char c = text.charAt(index);
+					if (Character.isDigit(c) || Character.isLetter(c)) {
+						index++;
+					} else {
+						break;
 					}
-					// Move forward past any non letters/nums
-					while (index < text.length()) {
-						char c = text.charAt(index);
-						if (!(Character.isDigit(c) || Character.isLetter(c))) {
-							index++;
-						} else {
-							break;
-						}
-					}
-					return index - start;
 				}
+				// Move forward past any non letters/nums
+				while (index < text.length()) {
+					char c = text.charAt(index);
+					if (!(Character.isDigit(c) || Character.isLetter(c))) {
+						index++;
+					} else {
+						break;
+					}
+				}
+				return index - start;
+			}
 }
 
 

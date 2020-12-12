@@ -58,6 +58,10 @@ public class TextToCommands {
 		keywords.put("print", "System.out.println(");
 		keywords.put("main function", "public static void main(String[] args) {");
 		keywords.put("equals", "=");
+		// related to variables
+		keywords.put("hint", "int");
+		keywords.put("inte", "int");
+		keywords.put("it", "int");
 		
 	}
 
@@ -66,7 +70,6 @@ public class TextToCommands {
 		(can be updated/changed later)
 	*/
 	private void initializeCommands() {
-		// TODO: add more, just testing with a few for now
 		commands.add("up");
 		commands.add("down");
 		commands.add("end line");
@@ -74,12 +77,17 @@ public class TextToCommands {
 		commands.add("start line");
 		commands.add("end file");
 		commands.add("start file");
-		commands.add("right");
+		commands.add("right"); // right may be heard as rate/write
+		commands.add("rate");
+		commands.add("write");
 		commands.add("left");
-		commands.add("declare var");
-		commands.add("forward word");
-		commands.add("backward word");
+		commands.add("forward");
+		commands.add("back");
+		commands.add("duck"); // back may be heard as this
+		commands.add("go to");
 	}
+	
+	
 
   /*
 	 Commands to declare terms, can be ended with 'end declare'
@@ -203,7 +211,6 @@ public class TextToCommands {
 	// no commands
 	public void simpleProcess(List<String> words) {
 		for (int i = 0; i < words.size(); i++) {
-			// TODO: Plugin.writeout(words.get(i))
 			System.out.println(words.get(i));
 		}
 	}
@@ -225,6 +232,26 @@ public class TextToCommands {
 		for (int i = 0; i < n; i++) {
 			words.remove(0);
 		}
+	}
+	
+	// Gets first string in a list and checks if it is a line number
+	private void handleGoToCommand(List<String> words) {
+		
+		if (words.size() == 0) {
+			// empty, no line number given
+			return;
+		}
+		String firstElement = words.get(0);
+		try {
+			Integer lineNum = Integer.parseInt(firstElement);	
+			editorHandler.goToLine(lineNum);
+			removeFirstN(1, words);
+		} catch (NumberFormatException e) {
+			// Not a number
+			removeFirstN(1, words);
+			return;
+		}
+		
 	}
 	
 	public boolean checkForCommand(List<String> words) {
@@ -265,17 +292,32 @@ public class TextToCommands {
 					editorHandler.moveCursorToBeginningOfFile();
 					break;
 				case "right":
-					// Move cursor one word right
-					editorHandler.moveCursorRight();
+					// Move cursor one char right
+					editorHandler.moveCursorOneCharRight();
+					break;
+				case "rate":
+					// Move cursor one char right
+					editorHandler.moveCursorOneCharRight();
+					break;
+				case "write":
+					// Move cursor one char right
+					editorHandler.moveCursorOneCharRight();
 					break;
 				case "left":
-					// Move cursor one word left
-					editorHandler.moveCursorLeft();
+					// Move cursor one char left
+					editorHandler.moveCursorOneCharLeft();
 					break;
-				case "declare var":
-					// Concatenation methods
-					// ex: default var declaration
-					System.out.println("Declaring var");
+				case "forward":
+					editorHandler.moveOneWordRight();
+					break;
+				case "back":
+					editorHandler.moveOneWordLeft();
+					break;
+				case "duck":
+					editorHandler.moveOneWordLeft();
+					break;
+				case "go to":
+					handleGoToCommand(words);
 					break;
 				default:
 					System.out.println("no match");
