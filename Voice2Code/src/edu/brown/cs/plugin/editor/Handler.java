@@ -9,6 +9,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -25,6 +26,9 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.formatter.ContentFormatter;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -335,7 +339,72 @@ public class Handler {
 		ILaunchConfiguration[] lct = mgr.getLaunchConfigurations();
 		return lct[0];
 	}
+	
 
+	public void rename(String target, String replace_with) {
+		System.out.println("Target: " + target);
+		System.out.println("Replace with: " + replace_with);
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+					IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+					IWorkbenchPage workbenchPage = iw.getActivePage();
+				IEditorPart part = workbenchPage.getActiveEditor();
+				ITextEditor editor = (ITextEditor)part;
+				IDocumentProvider dp = editor.getDocumentProvider();
+				IDocument document = dp.getDocument(editor.getEditorInput());
+	
+					try {
+	
+					final FindReplaceDocumentAdapter finder = new FindReplaceDocumentAdapter(document);
+						IRegion region;
+							int i = 0;
+							region = finder.find(0, target, true, true, false, false);
+							while (region != null) {
+									i = i + region.getLength();
+									finder.replace(replace_with, false);
+									region = finder.find(i, target, true, true, false, false);
+							}
+					} catch (final BadLocationException e1) {
+							// Just ignore them
+					}
+			}
+	
+		});
+	}
+
+
+	public void format() {
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+			  	IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			  	IWorkbenchPage workbenchPage = iw.getActivePage();
+				IEditorPart part = workbenchPage.getActiveEditor();
+				ITextEditor editor = (ITextEditor)part;
+				IDocumentProvider dp = editor.getDocumentProvider();
+				IDocument document = dp.getDocument(editor.getEditorInput());
+				
+				Control control = editor.getAdapter(Control.class);
+				StyledText styledText = (StyledText) control;
+				int offset = styledText.getCaretOffset();
+				
+				System.out.println("offset: " + offset);
+				int lineNumber = styledText.getLineAtOffset(offset);
+				System.out.println("line: " + lineNumber);
+				try {
+					IRegion lineRegion = document.getLineInformation(lineNumber);
+					ContentFormatter formatter = new ContentFormatter();
+					formatter.format(document, lineRegion);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+	
+		});
+	}
+	
 	public void moveOneWordRight() {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override
@@ -353,9 +422,12 @@ public class Handler {
 				int offset = styledText.getCaretOffset();
 
 				styledText.setSelection(styledText.getCharCount());
+				
+				//styledText.setSelection(styledText.getCharCount());
 				int currentLine = styledText.getLineAtOffset(styledText.getCaretOffset());
-				currentLine = Integer.max(0, currentLine - 1);
-				int lineOffset;
+		        currentLine = Integer.max(0, currentLine - 1);
+		        System.out.println("current line: " + currentLine);
+		        int lineOffset;
 				try {
 					lineOffset = getOffsetWithinLine(currentLine, offset, document);
 				} catch (BadLocationException e) {
@@ -363,10 +435,18 @@ public class Handler {
 					e.printStackTrace();
 					return;
 				}
+				System.out.println("styled text:");
+				styledText.print();
 				String textAtLine = styledText.getLine(currentLine);
+				
+				System.out.println("HERE 0");
+				System.out.println("offset " + lineOffset);
+				System.out.println("text: " + textAtLine);
 				String textAfter = textAtLine.substring(lineOffset - 1);// TODO: not sure why -1
+				System.out.println("HERE 1");
 				System.out.println(moveForward(textAfter));
-				styledText.setCaretOffset(offset + moveForward(textAfter) - 1); // Not sure why - 1
+		        styledText.setCaretOffset(offset + moveForward(textAfter) - 1); // Not sure why - 1
+				
 			}
 
 		});

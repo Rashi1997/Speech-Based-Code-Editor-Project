@@ -38,8 +38,12 @@ public class TextToCommands {
 	 */
 	private void initializeKeyWords() {
 		keywords.put("space", " ");
-		keywords.put("open parenthesis", "(");
-		keywords.put("close parenthesis", ")");
+		keywords.put("open parentheses", "(");
+		keywords.put("close parentheses", ")");
+		keywords.put("open", "(");
+		keywords.put("close", ")");
+		keywords.put("open bracket", "{");
+		keywords.put("close bracket", "}");
 		keywords.put("equals", "=");
 		keywords.put("plus", "+");
 		keywords.put("minus", "-");
@@ -50,7 +54,7 @@ public class TextToCommands {
 		keywords.put("semicolon", ";");
 		keywords.put("tab", "	");
 		keywords.put("quote", "'");
-		keywords.put("double", "\"");
+		keywords.put("double quotes", "\"");
 		keywords.put("comment", "//");
 		keywords.put("less than", "<");
 		keywords.put("greater than", ">");
@@ -63,6 +67,8 @@ public class TextToCommands {
 		keywords.put("hint", "int");
 		keywords.put("inte", "int");
 		keywords.put("it", "int");
+		///
+		keywords.put("enter", "\n");
 		
 	}
 
@@ -89,7 +95,8 @@ public class TextToCommands {
 		commands.add("compile");
 		commands.add("new project");
 		commands.add("create project");
-		
+		commands.add("rename");
+		commands.add("format");
 	}
 	
 	
@@ -346,6 +353,19 @@ public class TextToCommands {
 					break;
 				case "create project":
 					handleNewProjectCommand(words);
+				case "rename":
+					System.out.println("rename called");
+					if (words.size() < 2) {
+						System.out.println("Not enough parameters for rename.");
+					} else {
+						String target = words.get(0);
+						String replace_with = words.get(1);
+						editorHandler.rename(target, replace_with);
+						removeFirstN(2, words);
+					}
+					break;
+				case "format":
+					editorHandler.format();
 					break;
 				default:
 					System.out.println("no match");
