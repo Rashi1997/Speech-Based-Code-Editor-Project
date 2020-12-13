@@ -3,6 +3,7 @@ package edu.brown.cs.plugin.editor;
 import java.io.File;
 
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -11,6 +12,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -262,6 +264,37 @@ public class Handler {
 		return lct[0];
 	}
 	
+	public void rename(String target, String replace_with) {
+		System.out.println("Target: " + target);
+		System.out.println("Replace with: " + replace_with);
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+					IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+					IWorkbenchPage workbenchPage = iw.getActivePage();
+				IEditorPart part = workbenchPage.getActiveEditor();
+				ITextEditor editor = (ITextEditor)part;
+				IDocumentProvider dp = editor.getDocumentProvider();
+				IDocument document = dp.getDocument(editor.getEditorInput());
+	
+					try {
+	
+					final FindReplaceDocumentAdapter finder = new FindReplaceDocumentAdapter(document);
+						IRegion region;
+							int i = 0;
+							region = finder.find(0, target, true, true, false, false);
+							while (region != null) {
+									i = i + region.getLength();
+									finder.replace(replace_with, false);
+									region = finder.find(i, target, true, true, false, false);
+							}
+					} catch (final BadLocationException e1) {
+							// Just ignore them
+					}
+			}
+	
+		});
+	}
 	
 	public void moveOneWordRight() {
 		Display.getDefault().syncExec(new Runnable() {
