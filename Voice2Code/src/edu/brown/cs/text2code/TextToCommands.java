@@ -38,8 +38,12 @@ public class TextToCommands {
 	 */
 	private void initializeKeyWords() {
 		keywords.put("space", " ");
-		keywords.put("open parenthesis", "(");
-		keywords.put("close parenthesis", ")");
+		keywords.put("open parentheses", "(");
+		keywords.put("close parentheses", ")");
+		keywords.put("open", "(");
+		keywords.put("close", ")");
+		keywords.put("open bracket", "{");
+		keywords.put("close bracket", "}");
 		keywords.put("equals", "=");
 		keywords.put("plus", "+");
 		keywords.put("minus", "-");
@@ -50,7 +54,7 @@ public class TextToCommands {
 		keywords.put("semicolon", ";");
 		keywords.put("tab", "	");
 		keywords.put("quote", "'");
-		keywords.put("double", "\"");
+		keywords.put("double quotes", "\"");
 		keywords.put("comment", "//");
 		keywords.put("less than", "<");
 		keywords.put("greater than", ">");
@@ -63,6 +67,8 @@ public class TextToCommands {
 		keywords.put("hint", "int");
 		keywords.put("inte", "int");
 		keywords.put("it", "int");
+		///
+		keywords.put("enter", "\n");
 		
 	}
 

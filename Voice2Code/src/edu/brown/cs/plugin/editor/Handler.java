@@ -397,8 +397,11 @@ public class Handler {
 				int offset = styledText.getCaretOffset();
 				
 				styledText.setSelection(styledText.getCharCount());
+				
+				//styledText.setSelection(styledText.getCharCount());
 				int currentLine = styledText.getLineAtOffset(styledText.getCaretOffset());
 		        currentLine = Integer.max(0, currentLine - 1);
+		        System.out.println("current line: " + currentLine);
 		        int lineOffset;
 				try {
 					lineOffset = getOffsetWithinLine(currentLine, offset, document);
@@ -407,10 +410,18 @@ public class Handler {
 					e.printStackTrace();
 					return;
 				}
+				System.out.println("styled text:");
+				styledText.print();
 				String textAtLine = styledText.getLine(currentLine);
+				
+				System.out.println("HERE 0");
+				System.out.println("offset " + lineOffset);
+				System.out.println("text: " + textAtLine);
 				String textAfter = textAtLine.substring(lineOffset - 1);// TODO: not sure why -1
+				System.out.println("HERE 1");
 				System.out.println(moveForward(textAfter));
 		        styledText.setCaretOffset(offset + moveForward(textAfter) - 1); // Not sure why - 1
+				
 			}
 			
 		});
