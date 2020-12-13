@@ -87,6 +87,9 @@ public class TextToCommands {
 		commands.add("duck"); // back may be heard as this
 		commands.add("go to");
 		commands.add("compile");
+		commands.add("new project");
+		commands.add("create project");
+		
 	}
 	
 	
@@ -256,6 +259,21 @@ public class TextToCommands {
 		
 	}
 	
+	// Gets first string in a list and checks if it is a line number
+	private void handleNewProjectCommand(List<String> words) {
+		if (words.size() == 0) {
+			// empty, no line number given
+			return;
+		}
+		String pname = "";
+		for (String w : words) {
+			String temp = w.substring(0, 1).toUpperCase() + w.substring(1).toLowerCase();
+			pname += temp;
+		}
+		removeFirstN(words.size(), words);
+		editorHandler.createProject(pname);
+	}
+	
 	public boolean checkForCommand(List<String> words) {
 		// iterate over the words, matching for commands
 		List<String> command = matchTerm(words, commands);
@@ -322,6 +340,12 @@ public class TextToCommands {
 					handleGoToCommand(words);
 				case "compile":
 					editorHandler.compile();
+					break;
+				case "new project":
+					handleNewProjectCommand(words);
+					break;
+				case "create project":
+					handleNewProjectCommand(words);
 					break;
 				default:
 					System.out.println("no match");
