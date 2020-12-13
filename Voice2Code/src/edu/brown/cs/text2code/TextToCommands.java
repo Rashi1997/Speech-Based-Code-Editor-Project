@@ -484,9 +484,4 @@ public class TextToCommands {
 			}
 		}
 	}
-
-
-
-
-
 }
