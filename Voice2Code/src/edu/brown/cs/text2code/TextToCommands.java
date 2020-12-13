@@ -97,6 +97,10 @@ public class TextToCommands {
 		commands.add("create project");
 		commands.add("rename");
 		commands.add("format");
+		commands.add("backspace");
+		commands.add("delete");
+		commands.add("undo");
+		commands.add("redo");
 	}
 	
 	
@@ -368,6 +372,19 @@ public class TextToCommands {
 					break;
 				case "format":
 					editorHandler.format();
+					break;
+				case "backspace":
+					editorHandler.deleteLeftCharacter();
+					break;
+
+				case "delete":
+					editorHandler.deleteCurrentWord();
+					break;
+				case "undo":
+					editorHandler.undo();
+					break;
+				case "redo":
+					editorHandler.redo();
 					break;
 				default:
 					System.out.println("no match");

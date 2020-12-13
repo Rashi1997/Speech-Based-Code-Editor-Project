@@ -1,9 +1,13 @@
 package edu.brown.cs.plugin.editor;
 
 import java.io.File;
+import java.util.Map;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -13,6 +17,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -24,6 +29,9 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.ToolFactory;
+import org.eclipse.jdt.core.formatter.CodeFormatter;
+import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.text.IDocument;
@@ -36,8 +44,11 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -389,22 +400,45 @@ public class Handler {
 				ITextEditor editor = (ITextEditor)part;
 				IDocumentProvider dp = editor.getDocumentProvider();
 				IDocument document = dp.getDocument(editor.getEditorInput());
-				
-				Control control = editor.getAdapter(Control.class);
-				StyledText styledText = (StyledText) control;
-				int offset = styledText.getCaretOffset();
-				
-				System.out.println("offset: " + offset);
-				int lineNumber = styledText.getLineAtOffset(offset);
-				System.out.println("line: " + lineNumber);
-				try {
-					IRegion lineRegion = document.getLineInformation(lineNumber);
-					ContentFormatter formatter = new ContentFormatter();
-					formatter.format(document, lineRegion);
-				} catch (BadLocationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				// take default Eclipse formatting options
+				@SuppressWarnings("unchecked")
+				Map<String, String> options = DefaultCodeFormatterConstants.getEclipseDefaultSettings();
+
+				// initialize the compiler settings to be able to format 1.5 code
+				options.put(JavaCore.COMPILER_COMPLIANCE, JavaCore.VERSION_1_5);
+				options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_5);
+				options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_5);
+
+				// change the option to wrap each enum constant on a new line
+				options.put(
+					DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ENUM_CONSTANTS,
+					DefaultCodeFormatterConstants.createAlignmentValue(
+					true,
+					DefaultCodeFormatterConstants.WRAP_ONE_PER_LINE,
+					DefaultCodeFormatterConstants.INDENT_ON_COLUMN));
+
+				// instantiate the default code formatter with the given options
+				final CodeFormatter codeFormatter = ToolFactory.createCodeFormatter(options);
+				final TextEdit textEdit =
+				        codeFormatter.format(
+				            CodeFormatter.K_COMPILATION_UNIT,
+				            document.get(),
+				            0,
+				            document.get().length(),
+				            0,
+				            System.getProperty("line.separator"));
+				if (textEdit != null) {
+				      try {
+						textEdit.apply(document);
+					} catch (MalformedTreeException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (BadLocationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				    } else {
+				    }
 			}
 	
 		});
@@ -521,12 +555,13 @@ public class Handler {
 				int lineOffset;
 				try {
 					lineOffset = getOffsetOfLine(num, document);
+					styledText.setCaretOffset(lineOffset);
 				} catch (BadLocationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					return;
 				}
-				styledText.setCaretOffset(lineOffset);
+				
 
 			}
 		});
@@ -596,6 +631,118 @@ public class Handler {
 				}
 			}
 		});
+	}
+	
+	public void deleteLeftCharacter() {
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				IWorkbenchPage workbenchPage = iw.getActivePage();
+				IEditorPart part = workbenchPage.getActiveEditor();
+				ITextEditor editor = (ITextEditor) part;
+				editor.setFocus();
+				IDocumentProvider dp = editor.getDocumentProvider();
+				IDocument document = dp.getDocument(editor.getEditorInput());
+
+				Control control = editor.getAdapter(Control.class);
+				StyledText styledText = (StyledText) control;
+				int offset = styledText.getCaretOffset() - 1;
+				
+				try {
+					document.replace(offset, 1, "");
+					styledText.setCaretOffset(offset);
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+					return;
+				}
+				
+			}
+		});
+	}
+	
+	public void deleteCurrentWord() {
+		
+	}
+	
+	public void undo() {
+		
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+			IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			IWorkbench workbench = iw.getWorkbench();
+			IWorkbenchPage workbenchPage = iw.getActivePage();
+			IEditorPart part = workbenchPage.getActiveEditor();
+			ITextEditor editor = (ITextEditor) part;
+			editor.setFocus();
+			IDocumentProvider dp = editor.getDocumentProvider();
+			IDocument document = dp.getDocument(editor.getEditorInput());
+	
+			Control control = editor.getAdapter(Control.class);
+			IOperationHistory operationHistory = workbench.getOperationSupport().getOperationHistory();
+			IUndoContext undoContext = workbench.getOperationSupport().getUndoContext();
+			if (operationHistory.canUndo(undoContext)) {
+				try {
+					IStatus status = operationHistory.undo(undoContext, null, null);
+					if (status.isOK()) {
+						System.out.println("Successfully undid last operation");
+						return;
+					} else {
+						System.out.println("Undo went wrong! " + status.getMessage());
+						return;
+					}
+				} catch (ExecutionException e) {
+					// handle the exception 
+					e.printStackTrace();
+					return;
+				}
+			} else {
+				System.out.println("Nothing to undo in current context!");
+			}
+		}
+		});
+	}
+	
+	public void redo() {
+		
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+			IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			IWorkbench workbench = iw.getWorkbench();
+			IWorkbenchPage workbenchPage = iw.getActivePage();
+			IEditorPart part = workbenchPage.getActiveEditor();
+			ITextEditor editor = (ITextEditor) part;
+			editor.setFocus();
+			IDocumentProvider dp = editor.getDocumentProvider();
+			IDocument document = dp.getDocument(editor.getEditorInput());
+	
+			Control control = editor.getAdapter(Control.class);
+			IOperationHistory operationHistory = workbench.getOperationSupport().getOperationHistory();
+			IUndoContext undoContext = workbench.getOperationSupport().getUndoContext();
+			if (operationHistory.canRedo(undoContext)) {
+				try {
+					IStatus status = operationHistory.redo(undoContext, null, null);
+					if (status.isOK()) {
+						System.out.println("Successfully undid last operation");
+						return;
+					} else {
+						System.out.println("Undo went wrong! " + status.getMessage());
+						return;
+					}
+				} catch (ExecutionException e) {
+					// handle the exception 
+					e.printStackTrace();
+					return;
+				}
+			} else {
+				System.out.println("Nothing to redo in current context!");
+			}
+		}
+		});
+	}
+	public void createFile(String fileName) {
 	}
 
 	private int getOffsetWithinLine(int lineNumber, int offset, IDocument doc) throws BadLocationException {
