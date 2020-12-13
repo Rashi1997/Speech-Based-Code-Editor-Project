@@ -13,6 +13,8 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.formatter.ContentFormatter;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -346,6 +348,39 @@ public class Handler {
 	
 		});
 	}
+
+
+	public void format() {
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+			  	IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			  	IWorkbenchPage workbenchPage = iw.getActivePage();
+				IEditorPart part = workbenchPage.getActiveEditor();
+				ITextEditor editor = (ITextEditor)part;
+				IDocumentProvider dp = editor.getDocumentProvider();
+				IDocument document = dp.getDocument(editor.getEditorInput());
+				
+				Control control = editor.getAdapter(Control.class);
+				StyledText styledText = (StyledText) control;
+				int offset = styledText.getCaretOffset();
+				
+				System.out.println("offset: " + offset);
+				int lineNumber = styledText.getLineAtOffset(offset);
+				System.out.println("line: " + lineNumber);
+				try {
+					IRegion lineRegion = document.getLineInformation(lineNumber);
+					ContentFormatter formatter = new ContentFormatter();
+					formatter.format(document, lineRegion);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+	
+		});
+	}
+	
 	public void moveOneWordRight() {
 		Display.getDefault().syncExec(new Runnable() {
 			@Override

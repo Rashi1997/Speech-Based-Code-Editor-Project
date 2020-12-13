@@ -88,6 +88,7 @@ public class TextToCommands {
 		commands.add("go to");
 		commands.add("compile");
 		commands.add("rename");
+		commands.add("format");
 	}
 	
 	
@@ -334,6 +335,9 @@ public class TextToCommands {
 						editorHandler.rename(target, replace_with);
 						removeFirstN(2, words);
 					}
+					break;
+				case "format":
+					editorHandler.format();
 					break;
 				default:
 					System.out.println("no match");
