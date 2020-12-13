@@ -87,6 +87,7 @@ public class TextToCommands {
 		commands.add("duck"); // back may be heard as this
 		commands.add("go to");
 		commands.add("compile");
+		commands.add("rename");
 	}
 	
 	
@@ -322,6 +323,17 @@ public class TextToCommands {
 					handleGoToCommand(words);
 				case "compile":
 					editorHandler.compile();
+					break;
+				case "rename":
+					System.out.println("rename called");
+					if (words.size() < 2) {
+						System.out.println("Not enough parameters for rename.");
+					} else {
+						String target = words.get(0);
+						String replace_with = words.get(1);
+						editorHandler.rename(target, replace_with);
+						removeFirstN(2, words);
+					}
 					break;
 				default:
 					System.out.println("no match");
