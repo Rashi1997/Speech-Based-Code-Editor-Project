@@ -17,6 +17,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -46,12 +50,11 @@ public class Voice2Code {
 	          case SWT.Selection:
 	            if (started) {
 	            	setButton2Start();
-	            	
 	            	v2t.stop();
 	            }
 	            else {
 	            	setButton2Stop();
-	            	
+	            	setFocus2Editor();
 	            	v2t.start();
 	            }
 	            break;
@@ -70,6 +73,15 @@ public class Voice2Code {
 		started = true;
 		button.setBackground(new Color(Display.getCurrent(), 255, 40, 0, 100));
 		button.setText("Press to Stop");
+	}
+	
+	private void setFocus2Editor() {
+		IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchPage workbenchPage = iw.getActivePage();
+		IEditorPart part = workbenchPage.getActiveEditor();
+		if (part != null) {
+			part.setFocus();
+		}
 	}
 	
 	private Image getMicrophoneImage(String path) {

@@ -345,6 +345,7 @@ public class TextToCommands {
 					break;
 				case "go to":
 					handleGoToCommand(words);
+					break;
 				case "compile":
 					editorHandler.compile();
 					break;
@@ -353,6 +354,7 @@ public class TextToCommands {
 					break;
 				case "create project":
 					handleNewProjectCommand(words);
+					break;
 				case "rename":
 					System.out.println("rename called");
 					if (words.size() < 2) {

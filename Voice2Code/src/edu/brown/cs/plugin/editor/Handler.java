@@ -3,6 +3,7 @@ package edu.brown.cs.plugin.editor;
 import java.io.File;
 
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -19,7 +20,9 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -32,11 +35,13 @@ import org.eclipse.jface.text.formatter.ContentFormatter;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -560,19 +565,37 @@ public class Handler {
 					// set build path
 					IClasspathEntry[] jcp = org.eclipse.jdt.ui.PreferenceConstants.getDefaultJRELibrary();
 					javaProj.setRawClasspath(new IClasspathEntry[] { srcEntry, jcp[0] }, new NullProgressMonitor());
-
+					
+					// create app.java
+					IPackageFragment pack = javaProj.getPackageFragmentRoot(src).createPackageFragment("mypackage", false, null);
+					StringBuffer buffer = new StringBuffer();
+					buffer.append("package " + pack.getElementName() + ";\n");
+					buffer.append("\n");
+					String source = "public class App {\n\n}";
+					buffer.append(source);
+					ICompilationUnit cu = pack.createCompilationUnit("App.java", buffer.toString(), false, null);
+					
 					// expand src folder
 					IWorkbenchPage workbenchPage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 					IViewPart viewPart = workbenchPage.findView("org.eclipse.ui.navigator.ProjectExplorer");
-					((ISetSelectionTarget) viewPart).selectReveal(new StructuredSelection(src));
+					((ISetSelectionTarget) viewPart).selectReveal(new StructuredSelection(cu));
+					
+					
+					// open in texteditor
+					// close current
+					workbenchPage.closeAllEditors(true);
+					
+					// open App.java
+					IFile file = (IFile) cu.getUnderlyingResource();
+					IDE.openEditor(workbenchPage, file);
+					
+					// set focus to editor
+					workbenchPage.getActiveEditor().setFocus();
 				} catch (CoreException e) {
 					e.printStackTrace();
 				}
 			}
 		});
-	}
-	
-	public void createFile(String fileName) {
 	}
 
 	private int getOffsetWithinLine(int lineNumber, int offset, IDocument doc) throws BadLocationException {
