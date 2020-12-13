@@ -14,6 +14,7 @@ public final class RecognitionConfiguration {
     public static final String model = "default";
     public static final int sampleRateHertz = 16000;
     public static final String contextLocation = "/Users/eiseleappes/Speech-Editor2/Speech-Based-Code-Editor-Project/Voice2Code/src/edu/brown/cs/voice2text/config/context.config";
+
     
     // Streaming Recognition Configuration
     public static final boolean interimResults = false;
