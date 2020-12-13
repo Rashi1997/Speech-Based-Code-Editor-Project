@@ -4,6 +4,7 @@ import com.google.api.gax.rpc.ResponseObserver;
 import com.google.api.gax.rpc.StreamController;
 import com.google.cloud.speech.v1p1beta1.StreamingRecognizeResponse;
 
+import edu.brown.cs.plugin.editor.Handler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,12 +33,6 @@ public class ResponseObserverClass implements ResponseObserver<StreamingRecogniz
 		String transcript = ((StreamingRecognizeResponse) response).getResults(0).getAlternatives(0).getTranscript();
 		System.out.println("Transcript: " + transcript);
 		System.out.println("Confidence: " + ((StreamingRecognizeResponse) response).getResults(0).getAlternatives(0).getConfidence());
-		System.out.println("Final: " + ((StreamingRecognizeResponse) response).getResults(0).getIsFinal());
-		StringTokenizer st = new StringTokenizer(transcript);
-		while (st.hasMoreTokens()) {  
-			String token = st.nextToken();
-			System.out.println("Tokenize:" + token );
-		}
 		List<String> wordList = new ArrayList<String>(Arrays.asList(transcript.split(" ")));
 		textToCommandHandler.process(wordList);
 	}

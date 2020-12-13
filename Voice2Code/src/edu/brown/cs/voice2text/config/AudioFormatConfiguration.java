@@ -1,4 +1,4 @@
-package edu.brown.cs.voice2text;
+package edu.brown.cs.voice2text.config;
 
 public final class AudioFormatConfiguration {
 

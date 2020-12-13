@@ -9,9 +9,9 @@ public class App
     {
         Voice2Text v2t = new Voice2Text();
 		v2t.start();
-        Thread.sleep(20000); // 20s
+        Thread.sleep(5000); // 20s
         v2t.stop();
-        Thread.sleep(10000); // 10s
+        Thread.sleep(5000); // 10s
         v2t.start();
         Thread.sleep(20000); // 20s
         v2t.stop();

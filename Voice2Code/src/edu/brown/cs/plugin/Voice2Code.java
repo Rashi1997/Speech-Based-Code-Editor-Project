@@ -75,7 +75,6 @@ public class Voice2Code {
 	private Image getMicrophoneImage(String path) {
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
 		final URL fullPathString = FileLocator.find(bundle, new Path(path), null);
-	
 		ImageDescriptor imageDesc = ImageDescriptor.createFromURL(fullPathString);
 	
 		Image image = imageDesc.createImage();
