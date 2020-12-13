@@ -4,6 +4,9 @@ import java.io.File;
 import java.util.Map;
 
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -13,6 +16,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -40,6 +44,7 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -545,12 +550,13 @@ public class Handler {
 				int lineOffset;
 				try {
 					lineOffset = getOffsetOfLine(num, document);
+					styledText.setCaretOffset(lineOffset);
 				} catch (BadLocationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					return;
 				}
-				styledText.setCaretOffset(lineOffset);
+				
 
 			}
 		});
@@ -601,6 +607,115 @@ public class Handler {
 		});
 	}
 	
+	public void deleteLeftCharacter() {
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				IWorkbenchPage workbenchPage = iw.getActivePage();
+				IEditorPart part = workbenchPage.getActiveEditor();
+				ITextEditor editor = (ITextEditor) part;
+				editor.setFocus();
+				IDocumentProvider dp = editor.getDocumentProvider();
+				IDocument document = dp.getDocument(editor.getEditorInput());
+
+				Control control = editor.getAdapter(Control.class);
+				StyledText styledText = (StyledText) control;
+				int offset = styledText.getCaretOffset() - 1;
+				
+				try {
+					document.replace(offset, 1, "");
+					styledText.setCaretOffset(offset);
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+					return;
+				}
+				
+			}
+		});
+	}
+	
+	public void deleteCurrentWord() {
+		
+	}
+	
+	public void undo() {
+		
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+			IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			IWorkbench workbench = iw.getWorkbench();
+			IWorkbenchPage workbenchPage = iw.getActivePage();
+			IEditorPart part = workbenchPage.getActiveEditor();
+			ITextEditor editor = (ITextEditor) part;
+			editor.setFocus();
+			IDocumentProvider dp = editor.getDocumentProvider();
+			IDocument document = dp.getDocument(editor.getEditorInput());
+	
+			Control control = editor.getAdapter(Control.class);
+			IOperationHistory operationHistory = workbench.getOperationSupport().getOperationHistory();
+			IUndoContext undoContext = workbench.getOperationSupport().getUndoContext();
+			if (operationHistory.canUndo(undoContext)) {
+				try {
+					IStatus status = operationHistory.undo(undoContext, null, null);
+					if (status.isOK()) {
+						System.out.println("Successfully undid last operation");
+						return;
+					} else {
+						System.out.println("Undo went wrong! " + status.getMessage());
+						return;
+					}
+				} catch (ExecutionException e) {
+					// handle the exception 
+					e.printStackTrace();
+					return;
+				}
+			} else {
+				System.out.println("Nothing to undo in current context!");
+			}
+		}
+		});
+	}
+	
+	public void redo() {
+		
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+			IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			IWorkbench workbench = iw.getWorkbench();
+			IWorkbenchPage workbenchPage = iw.getActivePage();
+			IEditorPart part = workbenchPage.getActiveEditor();
+			ITextEditor editor = (ITextEditor) part;
+			editor.setFocus();
+			IDocumentProvider dp = editor.getDocumentProvider();
+			IDocument document = dp.getDocument(editor.getEditorInput());
+	
+			Control control = editor.getAdapter(Control.class);
+			IOperationHistory operationHistory = workbench.getOperationSupport().getOperationHistory();
+			IUndoContext undoContext = workbench.getOperationSupport().getUndoContext();
+			if (operationHistory.canRedo(undoContext)) {
+				try {
+					IStatus status = operationHistory.redo(undoContext, null, null);
+					if (status.isOK()) {
+						System.out.println("Successfully undid last operation");
+						return;
+					} else {
+						System.out.println("Undo went wrong! " + status.getMessage());
+						return;
+					}
+				} catch (ExecutionException e) {
+					// handle the exception 
+					e.printStackTrace();
+					return;
+				}
+			} else {
+				System.out.println("Nothing to redo in current context!");
+			}
+		}
+		});
+	}
 	public void createFile(String fileName) {
 	}
 
