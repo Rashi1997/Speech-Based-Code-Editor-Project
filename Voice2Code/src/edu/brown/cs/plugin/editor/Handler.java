@@ -79,7 +79,15 @@ public class Handler {
 				Control control = editor.getAdapter(Control.class);
 				StyledText styledText = (StyledText) control;
 				int currentLine = styledText.getLineAtOffset(styledText.getCaretOffset());
-				int newLoc = styledText.getOffsetAtLine(currentLine - 1);
+//				int newLoc = styledText.getOffsetAtLine(currentLine - 1);
+				int newLoc;
+				try {
+					newLoc = getOffsetOfLine(currentLine - 1, document);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return;
+				}
 	            styledText.setCaretOffset(newLoc);
 	            System.out.println("Moved cursor up to line " + styledText.getLineAtOffset(newLoc));
 			}
@@ -100,7 +108,15 @@ public class Handler {
 				Control control = editor.getAdapter(Control.class);
 				StyledText styledText = (StyledText) control;
 				int currentLine = styledText.getLineAtOffset(styledText.getCaretOffset());
+//				int newLoc = styledText.getOffsetAtLine(currentLine + 1);
 				int newLoc = styledText.getOffsetAtLine(currentLine + 1);
+				try {
+					newLoc = getOffsetOfLine(currentLine + 1, document);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return;
+				}
 				styledText.setCaretOffset(newLoc);
 	            System.out.println("Moved cursor down to line " + styledText.getLineAtOffset(newLoc));
 			}
