@@ -177,6 +177,8 @@ public class Handler {
 
 				Control control = editor.getAdapter(Control.class);
 				StyledText styledText = (StyledText) control;
+				System.out.println("text");
+				styledText.print();
 				int offset = styledText.getCaretOffset();
 				int newOffset = Integer.max(0, offset - 2);
 				styledText.setCaretOffset(newOffset); // TODO: not sure why need -2
@@ -416,9 +418,14 @@ public class Handler {
 				editor.setFocus();
 				IDocumentProvider dp = editor.getDocumentProvider();
 				IDocument document = dp.getDocument(editor.getEditorInput());
+			
 
 				Control control = editor.getAdapter(Control.class);
+				
 				StyledText styledText = (StyledText) control;
+				
+				System.out.println("text1");
+				styledText.print();
 				int offset = styledText.getCaretOffset();
 
 				styledText.setSelection(styledText.getCharCount());
