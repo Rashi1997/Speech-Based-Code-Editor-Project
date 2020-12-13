@@ -66,11 +66,45 @@ public class Handler {
 	}
 	
 	public void moveCursorUp() {
-		
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+			  	IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			  	IWorkbenchPage workbenchPage = iw.getActivePage();
+				IEditorPart part = workbenchPage.getActiveEditor();
+				ITextEditor editor = (ITextEditor)part;
+				IDocumentProvider dp = editor.getDocumentProvider();
+				IDocument document = dp.getDocument(editor.getEditorInput());
+				
+				Control control = editor.getAdapter(Control.class);
+				StyledText styledText = (StyledText) control;
+				int currentLine = styledText.getLineAtOffset(styledText.getCaretOffset());
+				int newLoc = styledText.getOffsetAtLine(currentLine - 1);
+	            styledText.setCaretOffset(newLoc);
+	            System.out.println("Moved cursor up to line " + styledText.getLineAtOffset(newLoc));
+			}
+		});
 	}
 	
 	public void moveCursorDown() {
-		
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+			  	IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			  	IWorkbenchPage workbenchPage = iw.getActivePage();
+				IEditorPart part = workbenchPage.getActiveEditor();
+				ITextEditor editor = (ITextEditor)part;
+				IDocumentProvider dp = editor.getDocumentProvider();
+				IDocument document = dp.getDocument(editor.getEditorInput());
+				
+				Control control = editor.getAdapter(Control.class);
+				StyledText styledText = (StyledText) control;
+				int currentLine = styledText.getLineAtOffset(styledText.getCaretOffset());
+				int newLoc = styledText.getOffsetAtLine(currentLine + 1);
+				styledText.setCaretOffset(newLoc);
+	            System.out.println("Moved cursor down to line " + styledText.getLineAtOffset(newLoc));
+			}
+		});
 	}
 	
 	public void moveCursorOneCharRight() {
