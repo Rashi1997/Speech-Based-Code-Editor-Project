@@ -812,6 +812,31 @@ public class Handler {
 		}
 		return index - start;
 	}
+	
+	public void moveCursorToPosition(int line, int column) {
+		
+		IEditorPart editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+		
+		if (editor instanceof ITextEditor) {
+			ITextEditor textEditor =  ((ITextEditor) editor);
+			IDocumentProvider dp = textEditor.getDocumentProvider();
+			IDocument document = dp.getDocument(editor.getEditorInput());
+			int offset = column;
+			for (int curLine = 0; curLine < line; curLine++) {
+				try {
+					offset+=document.getLineLength(curLine);
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+				}
+			}
+
+			ISelectionProvider selectionProvider = textEditor.getSelectionProvider();
+			selectionProvider.setSelection(new TextSelection(offset, 0));
+			ITextSelection selection = (ITextSelection)selectionProvider.getSelection();
+			System.out.println(selection.getOffset());
+		}
+		
+	}
 }
 
 //	private void moveCursorToLineNumber(int lineNumber) {
