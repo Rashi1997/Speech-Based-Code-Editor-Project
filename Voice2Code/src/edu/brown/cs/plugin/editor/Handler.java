@@ -233,6 +233,32 @@ public class Handler {
 			}
 		});
 	}
+	
+	public void editRedo() {
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				IServiceLocator serviceLocator = PlatformUI.getWorkbench();
+				ICommandService commandService = (ICommandService) serviceLocator.getService(ICommandService.class);
+				Command command = commandService.getCommand("org.eclipse.ui.edit.redo"); //$NON-NLS-1$
+				try {
+					command.executeWithChecks(new ExecutionEvent());
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NotDefinedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NotEnabledException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NotHandledException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
 	// Moves left one word
 	public void moveCursorOneCharLeft() {
