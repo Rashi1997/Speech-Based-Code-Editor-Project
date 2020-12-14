@@ -102,6 +102,7 @@ public class TextToCommands {
 		commands.add("undo");
 		commands.add("redo");
 		commands.add("search");
+		commands.add("fix");
 	}
 	
 	
@@ -393,6 +394,9 @@ public class TextToCommands {
 					if (signature == null)
 						break;
 					goToMethod(signature);
+					break;
+				case "fix":
+					editorHandler.editUndo();
 					break;
 				default:
 					System.out.println("no match");
