@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="Status/Soma/Plugin_IDE/speachtocode.ide.first/src"/>
+	<classpathentry kind="src" path="text2code/src/main/java"/>
+	<classpathentry kind="src" path="text2code/src/test/java"/>
+	<classpathentry kind="src" path="Voice2Code/src"/>
+	<classpathentry kind="lib" path="text2code/target/text2code-1.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="Voice2Code/lib/voice2text-dependencies.jar"/>
+	<classpathentry kind="output" path="Status/Soma/Plugin_IDE/speachtocode.ide.first/bin"/>
+</classpath>
