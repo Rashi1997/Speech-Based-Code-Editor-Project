@@ -10,7 +10,12 @@ import java.util.Scanner;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.resources.IFolder;
@@ -59,9 +64,11 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ISetSelectionTarget;
+import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -181,6 +188,76 @@ public class Handler {
 				int offset = styledText.getCaretOffset();
 				int newOffset = Integer.min(styledText.getCharCount(), offset + 1);
 				styledText.setCaretOffset(newOffset); // TODO: not sure why don't need +1
+				IServiceLocator serviceLocator = PlatformUI.getWorkbench();
+				ICommandService commandService = (ICommandService) serviceLocator.getService(ICommandService.class);
+				Command command = commandService.getCommand("org.eclipse.ui.edit.undo"); //$NON-NLS-1$
+				try {
+					command.executeWithChecks(new ExecutionEvent());
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NotDefinedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NotEnabledException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NotHandledException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	public void editUndo() {
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				IServiceLocator serviceLocator = PlatformUI.getWorkbench();
+				ICommandService commandService = (ICommandService) serviceLocator.getService(ICommandService.class);
+				Command command = commandService.getCommand("org.eclipse.ui.edit.undo"); //$NON-NLS-1$
+				try {
+					command.executeWithChecks(new ExecutionEvent());
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NotDefinedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NotEnabledException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NotHandledException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	public void editRedo() {
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				IServiceLocator serviceLocator = PlatformUI.getWorkbench();
+				ICommandService commandService = (ICommandService) serviceLocator.getService(ICommandService.class);
+				Command command = commandService.getCommand("org.eclipse.ui.edit.redo"); //$NON-NLS-1$
+				try {
+					command.executeWithChecks(new ExecutionEvent());
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NotDefinedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NotEnabledException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (NotHandledException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 	}

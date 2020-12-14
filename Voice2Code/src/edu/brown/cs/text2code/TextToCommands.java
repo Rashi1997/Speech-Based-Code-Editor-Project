@@ -102,6 +102,8 @@ public class TextToCommands {
 		commands.add("undo");
 		commands.add("redo");
 		commands.add("search");
+		commands.add("fix");
+		commands.add("redo");
 	}
 	
 	
@@ -381,12 +383,6 @@ public class TextToCommands {
 				case "delete":
 					editorHandler.deleteCurrentWord();
 					break;
-				case "undo":
-					editorHandler.undo();
-					break;
-				case "redo":
-					editorHandler.redo();
-					break;
 //				case "search":
 //					words.remove("search");
 //					MethodSignature signature = parseMethod(words);
@@ -394,6 +390,12 @@ public class TextToCommands {
 //						break;
 //					goToMethod(signature);
 //					break;
+				case "undo":
+					editorHandler.editUndo();
+					break;
+				case "redo":
+					editorHandler.editRedo();
+					break;
 				default:
 					System.out.println("no match");
 					break;
