@@ -1,7 +1,12 @@
 package edu.brown.cs.plugin.editor;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
+import java.util.Scanner;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.core.resources.IFile;
@@ -187,7 +192,7 @@ public class Handler {
 				IWorkbenchPage workbenchPage = iw.getActivePage();
 				IEditorPart part = workbenchPage.getActiveEditor();
 				ITextEditor editor = (ITextEditor) part;
-				editor.setFocus();
+				//editor.setFocus();
 				IDocumentProvider dp = editor.getDocumentProvider();
 				IDocument document = dp.getDocument(editor.getEditorInput());
 
@@ -454,45 +459,62 @@ public class Handler {
 				IWorkbenchPage workbenchPage = iw.getActivePage();
 				IEditorPart part = workbenchPage.getActiveEditor();
 				ITextEditor editor = (ITextEditor) part;
-				editor.setFocus();
+				//editor.setFocus();
 				IDocumentProvider dp = editor.getDocumentProvider();
 				IDocument document = dp.getDocument(editor.getEditorInput());
 			
 
+					
+				IFile ifile = (IFile) part.getEditorInput().getAdapter(IFile.class);
+				File file = ifile.getLocation().toFile();
 				Control control = editor.getAdapter(Control.class);
-				
 				StyledText styledText = (StyledText) control;
 				
-				System.out.println("text1");
-				styledText.print();
+				//styledText.getLineAtOffset(offset);
 				int offset = styledText.getCaretOffset();
-
-				styledText.setSelection(styledText.getCharCount());
-				
-				//styledText.setSelection(styledText.getCharCount());
-				int currentLine = styledText.getLineAtOffset(styledText.getCaretOffset());
+				int currentLine = styledText.getLineAtOffset(offset);
 		        currentLine = Integer.max(0, currentLine - 1);
-		        System.out.println("current line: " + currentLine);
-		        int lineOffset;
 				try {
-					lineOffset = getOffsetWithinLine(currentLine, offset, document);
-				} catch (BadLocationException e) {
+				InputStream inputstream = new FileInputStream(file);
+				
+					int data = 0;
+					int c = 0;
+					// Read up to current
+					while(data != -1 && c < offset - 1) {
+					
+					  data = inputstream.read();
+					  System.out.println((char)data);
+					  c++;
+					}
+					c = 0;
+					// Keep going until find non alpha-numeric char
+					while (data != -1) {
+						data = inputstream.read();
+						char dataChar = (char) data;
+						if (Character.isDigit(dataChar) || Character.isLetter(dataChar)) {
+							c++;
+						} else {
+							break;
+						}
+					}
+					// Keep going until find alpha-numeric char
+					while (data != -1) {
+						data = inputstream.read();
+						char dataChar = (char) data;
+						if (!(Character.isDigit(dataChar) || Character.isLetter(dataChar))) {
+							c++;
+						} else {
+							break;
+						}
+					}
+					
+					inputstream.close();
+			        styledText.setCaretOffset(offset + c);
+				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					return;
 				}
-				System.out.println("styled text:");
-				styledText.print();
-				String textAtLine = styledText.getLine(currentLine);
-				
-				System.out.println("HERE 0");
-				System.out.println("offset " + lineOffset);
-				System.out.println("text: " + textAtLine);
-				String textAfter = textAtLine.substring(lineOffset - 1);// TODO: not sure why -1
-				System.out.println("HERE 1");
-				System.out.println(moveForward(textAfter));
-		        styledText.setCaretOffset(offset + moveForward(textAfter) - 1); // Not sure why - 1
-				
 			}
 
 		});
@@ -507,32 +529,54 @@ public class Handler {
 				IWorkbenchPage workbenchPage = iw.getActivePage();
 				IEditorPart part = workbenchPage.getActiveEditor();
 				ITextEditor editor = (ITextEditor) part;
-				editor.setFocus();
+				//editor.setFocus();
 				IDocumentProvider dp = editor.getDocumentProvider();
 				IDocument document = dp.getDocument(editor.getEditorInput());
+			
 
+					
+				IFile ifile = (IFile) part.getEditorInput().getAdapter(IFile.class);
+				File file = ifile.getLocation().toFile();
 				Control control = editor.getAdapter(Control.class);
 				StyledText styledText = (StyledText) control;
+				
 				int offset = styledText.getCaretOffset();
-
-				styledText.setSelection(styledText.getCharCount());
-				int currentLine = styledText.getLineAtOffset(styledText.getCaretOffset());
-				currentLine = Integer.max(0, currentLine - 1);
-				int lineOffset;
+				System.out.println(offset);
+				int currentLine = styledText.getLineAtOffset(offset);
+		        currentLine = Integer.max(0, currentLine - 1);
+		        System.out.println(currentLine);
+		        
+				System.out.println(file.getName());
 				try {
-					lineOffset = getOffsetWithinLine(currentLine, offset, document);
-				} catch (BadLocationException e) {
+				InputStream inputstream = new FileInputStream(file);
+				
+					int data = 0;
+					int c = 0;
+					// p and p2 used to track last alphanumeric char before the one at offset
+					int p = 0;
+					int p2 = 0;
+					// Read up to current
+					while(data != -1 && c < offset - 1) {
+					
+					  data = inputstream.read();
+					  char dataChar = (char) data;
+					  if (Character.isDigit(dataChar) || Character.isLetter(dataChar)) {
+						    p2 = c + 1;
+						} else {
+							// Wait to set p until hit non alphanumeric
+							p = p2;
+						}
+					 
+					  c++;
+					}
+					
+					inputstream.close();
+			        styledText.setCaretOffset(Integer.min(p, styledText.getCharCount()-1));
+				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					return;
 				}
-				String textAtLine = styledText.getLine(currentLine);
-				String textBefore = textAtLine.substring(0, lineOffset - 1); // TODO: bugging without -1
-				System.out.println("BEFORE: " + textBefore);
-				System.out.println(moveBack(textBefore));
-				System.out.println(offset);
-				System.out.println(offset + moveBack(textBefore));
-				styledText.setCaretOffset(offset + moveBack(textBefore) - 1); // TODO: bugging without -1
 			}
 
 		});
