@@ -21,35 +21,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-
 import edu.brown.cs.plugin.editor.Handler;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
-
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseException;
-import com.github.javaparser.ParseResult;
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class TextToCommands {
 
@@ -121,6 +93,7 @@ public class TextToCommands {
 	private void initializeCommands() {
 		commands.add("up");
 		commands.add("down");
+		commands.add("dumb");
 		commands.add("end line");
 		commands.add("next line");
 		commands.add("start line");
@@ -137,6 +110,7 @@ public class TextToCommands {
 		commands.add("compile");
 		commands.add("new project");
 		commands.add("create project");
+		commands.add("create new project");
 		commands.add("rename");
 		commands.add("format");
 		commands.add("backspace");
@@ -347,6 +321,10 @@ public class TextToCommands {
 					// Move cursor down one line
 					editorHandler.moveCursorDown();
 					break;
+				case "dumb":
+					// Move cursor down one line
+					editorHandler.moveCursorDown();
+					break;
 				case "end line":
 					// Move cursor to end of line
 					editorHandler.moveCursorToEndOfLine();
@@ -404,6 +382,9 @@ public class TextToCommands {
 				case "create project":
 					handleNewProjectCommand(words);
 					break;
+				case "create new project":
+					handleNewProjectCommand(words);
+					break;
 				case "rename":
 					System.out.println("rename called");
 					if (words.size() < 2) {
@@ -425,13 +406,13 @@ public class TextToCommands {
 				case "delete":
 					editorHandler.deleteCurrentWord();
 					break;
-				case "search":
-					words.remove("search");
-					MethodSignature signature = parseMethod(words);
-					if (signature == null)
-						break;
-					goToMethod(signature);
-					break;
+//				case "search":
+//					words.remove("search");
+//					MethodSignature signature = parseMethod(words);
+//					if (signature == null)
+//						break;
+//					goToMethod(signature);
+//					break;
 				case "undo":
 					editorHandler.editUndo();
 					break;
@@ -517,143 +498,143 @@ public class TextToCommands {
 		}
 	}
 	
-	class MethodSignature {
-		private String name;
-		private String returnType;
-		private List<String> arguments;
-		MethodSignature(String name, String returnType, List<String> arguments) {
-			this.name = name;
-			this.returnType = returnType;
-			this.arguments = arguments;
-		}
+//	class MethodSignature {
+//		private String name;
+//		private String returnType;
+//		private List<String> arguments;
+//		MethodSignature(String name, String returnType, List<String> arguments) {
+//			this.name = name;
+//			this.returnType = returnType;
+//			this.arguments = arguments;
+//		}
+//
+//		@Override
+//		public boolean equals(Object o) {
+//			if (this == o) return true;
+//			if (o == null || getClass() != o.getClass()) return false;
+//			MethodSignature that = (MethodSignature) o;
+//			return Objects.equals(name, that.name) &&
+//					Objects.equals(returnType, that.returnType) &&
+//					arguments.equals(that.arguments);
+//		}
+//
+//		@Override
+//		public int hashCode() {
+//			return Objects.hash(name, returnType, arguments);
+//		}
+//	}
 
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
-			MethodSignature that = (MethodSignature) o;
-			return Objects.equals(name, that.name) &&
-					Objects.equals(returnType, that.returnType) &&
-					arguments.equals(that.arguments);
-		}
+//	  public class MethodVisitor extends VoidVisitorAdapter
+//	  {
+//		  private int line = 0;
+//		  private int column = 0;
+//	        public void visit(MethodDeclaration n, Object arg)
+//	        {
+//	        	
+//	        	MethodSignature signature = new MethodSignature(n.getNameAsString(), n.getTypeAsString(), 
+//	        			n.getParameters().stream().map(s->s.getTypeAsString()).collect(Collectors.toList()));
+//	        	
+//	            if (signature.equals((MethodSignature) arg)) {
+//	            	line = n.getBegin().get().line;
+//	            	column = n.getBegin().get().column;
+//	            	System.out.println("Found method at line=" + line + ", column=" + column);
+//	            }
+//	        }
+//	        public int getLine() {
+//	        	return line;
+//	        }
+//	        
+//	        public int getColumn() {
+//	        	return column;
+//	        }
+//	  }
+//	public void goToMethod(MethodSignature signature) {
+//		try {
+//			Display.getDefault().asyncExec(() -> {
+//				IWorkbenchPart workbenchPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+//						.getActivePart();
+//				IFile ifile = (IFile) workbenchPart.getSite().getPage().getActiveEditor().getEditorInput()
+//						.getAdapter(IFile.class);
+//				File file = ifile.getLocation().toFile();
+//				try {
+//					InputStream in = new FileInputStream(file);
+//					CompilationUnit cu = new JavaParser().parse(in).getResult().get();
+//					MethodVisitor visitor = new MethodVisitor();
+//					visitor.visit(cu, signature);
+//					in.close();
+//					editorHandler.moveCursorToPosition(visitor.getLine(), visitor.getColumn());
+//				} catch (FileNotFoundException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} finally {
+//					
+//				}
+//			});
+//
+//		} catch (Exception ex) {
+//			ex.printStackTrace();
+//		}
+//	}
 
-		@Override
-		public int hashCode() {
-			return Objects.hash(name, returnType, arguments);
-		}
-	}
-
-	  public class MethodVisitor extends VoidVisitorAdapter
-	  {
-		  private int line = 0;
-		  private int column = 0;
-	        public void visit(MethodDeclaration n, Object arg)
-	        {
-	        	
-	        	MethodSignature signature = new MethodSignature(n.getNameAsString(), n.getTypeAsString(), 
-	        			n.getParameters().stream().map(s->s.getTypeAsString()).collect(Collectors.toList()));
-	        	
-	            if (signature.equals((MethodSignature) arg)) {
-	            	line = n.getBegin().get().line;
-	            	column = n.getBegin().get().column;
-	            	System.out.println("Found method at line=" + line + ", column=" + column);
-	            }
-	        }
-	        public int getLine() {
-	        	return line;
-	        }
-	        
-	        public int getColumn() {
-	        	return column;
-	        }
-	  }
-	public void goToMethod(MethodSignature signature) {
-		try {
-			Display.getDefault().asyncExec(() -> {
-				IWorkbenchPart workbenchPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-						.getActivePart();
-				IFile ifile = (IFile) workbenchPart.getSite().getPage().getActiveEditor().getEditorInput()
-						.getAdapter(IFile.class);
-				File file = ifile.getLocation().toFile();
-				try {
-					InputStream in = new FileInputStream(file);
-					CompilationUnit cu = new JavaParser().parse(in).getResult().get();
-					MethodVisitor visitor = new MethodVisitor();
-					visitor.visit(cu, signature);
-					in.close();
-					editorHandler.moveCursorToPosition(visitor.getLine(), visitor.getColumn());
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} finally {
-					
-				}
-			});
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	public MethodSignature parseMethod(List<String> words) {
-		// example: search get name returns String
-		// Above example looks for signature String getName()
-		// example: search get test returns String arguments Integer Double
-		// Above example looks for signature String getTest(Integer, Double)
-		String wordsString = String.join(" ", words);
-		String returnKeyword = null;
-		String argumentKeyword = null;
-		if (words.contains("returns"))
-			returnKeyword = "returns";
-		if (words.contains("return"))
-			returnKeyword = "return";
-		if (words.contains("returned"))
-			returnKeyword = "returned";
-
-		if (words.contains("arguments"))
-			argumentKeyword = "arguments";
-		if (words.contains("argument"))
-			argumentKeyword = "argument";
-
-		if (words.size() < 2 || returnKeyword == null) {
-			System.out.println("ERROR - Improperly formatted search attempted.");
-			words.clear();
-			return null;
-		}
-		String methodName = wordsString.substring(0, wordsString.indexOf(returnKeyword));
-		wordsString = wordsString.replace(methodName, "").toLowerCase();
-		methodName = getNormalCase(Arrays.asList(methodName.split(" ")));
-		System.out.println("methodName: " + methodName);
-
-		String returnType = wordsString.substring(0,
-				!wordsString.contains(argumentKeyword) ? wordsString.length() : wordsString.indexOf(argumentKeyword));
-		wordsString = wordsString.replace(returnType, "");
-		returnType = returnType.replace(returnKeyword, "");
-		returnType = returnType.trim();
-		if (returnType.contains(" "))
-			returnType = getNormalCase(Arrays.asList(returnType.split(" ")));
-		else
-			returnType = getNormalCase(Collections.singletonList(returnType));
-		returnType = returnType.substring(0, 1).toUpperCase() + returnType.substring(1);
-		System.out.println("returnType: " + returnType);
-
-		List<String> arguments = new ArrayList<>();
-		if (argumentKeyword != null){
-		wordsString = wordsString.replace(argumentKeyword, "").trim();		if (!wordsString.isEmpty() && wordsString.contains(" "))
-			arguments = Arrays.stream(wordsString.split(" ")).map(s -> s.substring(0, 1).toUpperCase() + s.substring(1))
-					.collect(Collectors.toList());
-		else if (!wordsString.isEmpty())
-			arguments = Collections.singletonList(wordsString.substring(0, 1).toUpperCase() + wordsString.substring(1));
-		}
-		words.clear();
-
-		System.out.println("arguments: " + arguments);
-
-		return new MethodSignature(methodName, returnType, arguments);
-	}
+//	public MethodSignature parseMethod(List<String> words) {
+//		// example: search get name returns String
+//		// Above example looks for signature String getName()
+//		// example: search get test returns String arguments Integer Double
+//		// Above example looks for signature String getTest(Integer, Double)
+//		String wordsString = String.join(" ", words);
+//		String returnKeyword = null;
+//		String argumentKeyword = null;
+//		if (words.contains("returns"))
+//			returnKeyword = "returns";
+//		if (words.contains("return"))
+//			returnKeyword = "return";
+//		if (words.contains("returned"))
+//			returnKeyword = "returned";
+//
+//		if (words.contains("arguments"))
+//			argumentKeyword = "arguments";
+//		if (words.contains("argument"))
+//			argumentKeyword = "argument";
+//
+//		if (words.size() < 2 || returnKeyword == null) {
+//			System.out.println("ERROR - Improperly formatted search attempted.");
+//			words.clear();
+//			return null;
+//		}
+//		String methodName = wordsString.substring(0, wordsString.indexOf(returnKeyword));
+//		wordsString = wordsString.replace(methodName, "").toLowerCase();
+//		methodName = getNormalCase(Arrays.asList(methodName.split(" ")));
+//		System.out.println("methodName: " + methodName);
+//
+//		String returnType = wordsString.substring(0,
+//				!wordsString.contains(argumentKeyword) ? wordsString.length() : wordsString.indexOf(argumentKeyword));
+//		wordsString = wordsString.replace(returnType, "");
+//		returnType = returnType.replace(returnKeyword, "");
+//		returnType = returnType.trim();
+//		if (returnType.contains(" "))
+//			returnType = getNormalCase(Arrays.asList(returnType.split(" ")));
+//		else
+//			returnType = getNormalCase(Collections.singletonList(returnType));
+//		returnType = returnType.substring(0, 1).toUpperCase() + returnType.substring(1);
+//		System.out.println("returnType: " + returnType);
+//
+//		List<String> arguments = new ArrayList<>();
+//		if (argumentKeyword != null){
+//		wordsString = wordsString.replace(argumentKeyword, "").trim();		if (!wordsString.isEmpty() && wordsString.contains(" "))
+//			arguments = Arrays.stream(wordsString.split(" ")).map(s -> s.substring(0, 1).toUpperCase() + s.substring(1))
+//					.collect(Collectors.toList());
+//		else if (!wordsString.isEmpty())
+//			arguments = Collections.singletonList(wordsString.substring(0, 1).toUpperCase() + wordsString.substring(1));
+//		}
+//		words.clear();
+//
+//		System.out.println("arguments: " + arguments);
+//
+//		return new MethodSignature(methodName, returnType, arguments);
+//	}
 	public void printList(List<String> words) {
 		for (int i = 0 ; i < words.size(); i ++) {
 			System.out.print(words.get(i) + " ");
