@@ -27,6 +27,29 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 import edu.brown.cs.plugin.editor.Handler;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
+
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseException;
+import com.github.javaparser.ParseResult;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class TextToCommands {
 
@@ -498,7 +521,6 @@ public class TextToCommands {
 		private String name;
 		private String returnType;
 		private List<String> arguments;
-
 		MethodSignature(String name, String returnType, List<String> arguments) {
 			this.name = name;
 			this.returnType = returnType;
@@ -596,7 +618,7 @@ public class TextToCommands {
 		if (words.contains("argument"))
 			argumentKeyword = "argument";
 
-		if (words.size() < 2 || returnKeyword == null || argumentKeyword == null) {
+		if (words.size() < 2 || returnKeyword == null) {
 			System.out.println("ERROR - Improperly formatted search attempted.");
 			words.clear();
 			return null;
@@ -619,18 +641,19 @@ public class TextToCommands {
 		System.out.println("returnType: " + returnType);
 
 		List<String> arguments = new ArrayList<>();
+		if (argumentKeyword != null){
 		wordsString = wordsString.replace(argumentKeyword, "").trim();		if (!wordsString.isEmpty() && wordsString.contains(" "))
 			arguments = Arrays.stream(wordsString.split(" ")).map(s -> s.substring(0, 1).toUpperCase() + s.substring(1))
 					.collect(Collectors.toList());
 		else if (!wordsString.isEmpty())
 			arguments = Collections.singletonList(wordsString.substring(0, 1).toUpperCase() + wordsString.substring(1));
+		}
 		words.clear();
 
 		System.out.println("arguments: " + arguments);
 
 		return new MethodSignature(methodName, returnType, arguments);
 	}
-
 	public void printList(List<String> words) {
 		for (int i = 0 ; i < words.size(); i ++) {
 			System.out.print(words.get(i) + " ");
