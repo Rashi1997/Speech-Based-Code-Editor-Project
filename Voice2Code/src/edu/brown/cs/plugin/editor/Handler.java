@@ -177,7 +177,7 @@ public class Handler {
 				Control control = editor.getAdapter(Control.class);
 				StyledText styledText = (StyledText) control;
 				int offset = styledText.getCaretOffset();
-				int newOffset = Integer.min(styledText.getCharCount(), offset);
+				int newOffset = Integer.min(styledText.getCharCount(), offset + 1);
 				styledText.setCaretOffset(newOffset); // TODO: not sure why don't need +1
 			}
 		});
@@ -201,7 +201,7 @@ public class Handler {
 				System.out.println("text");
 				styledText.print();
 				int offset = styledText.getCaretOffset();
-				int newOffset = Integer.max(0, offset - 2);
+				int newOffset = Integer.max(0, offset - 1);
 				styledText.setCaretOffset(newOffset); // TODO: not sure why need -2
 			}
 		});
@@ -480,27 +480,31 @@ public class Handler {
 					int data = 0;
 					int c = 0;
 					// Read up to current
-					while(data != -1 && c < offset - 1) {
+					while(data != -1 && c < offset) {
 					
 					  data = inputstream.read();
 					  System.out.println((char)data);
 					  c++;
 					}
 					c = 0;
+					//System.out.println("at current pos");
 					// Keep going until find non alpha-numeric char
 					while (data != -1) {
 						data = inputstream.read();
 						char dataChar = (char) data;
+						//System.out.println(dataChar);
 						if (Character.isDigit(dataChar) || Character.isLetter(dataChar)) {
 							c++;
 						} else {
 							break;
 						}
 					}
+					//System.out.println("found non alphanumeric");
 					// Keep going until find alpha-numeric char
 					while (data != -1) {
 						data = inputstream.read();
 						char dataChar = (char) data;
+						//System.out.println(dataChar);
 						if (!(Character.isDigit(dataChar) || Character.isLetter(dataChar))) {
 							c++;
 						} else {
@@ -509,7 +513,7 @@ public class Handler {
 					}
 					
 					inputstream.close();
-			        styledText.setCaretOffset(offset + c);
+			        styledText.setCaretOffset(offset + c + 1);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -556,7 +560,7 @@ public class Handler {
 					int p = 0;
 					int p2 = 0;
 					// Read up to current
-					while(data != -1 && c < offset - 1) {
+					while(data != -1 && c < offset) {
 					
 					  data = inputstream.read();
 					  char dataChar = (char) data;
