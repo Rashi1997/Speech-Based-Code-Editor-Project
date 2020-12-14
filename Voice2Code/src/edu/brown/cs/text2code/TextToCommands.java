@@ -594,7 +594,7 @@ public class TextToCommands {
 		if (words.contains("argument"))
 			argumentKeyword = "argument";
 
-		if (words.size() < 2 || returnKeyword == null || argumentKeyword == null) {
+		if (words.size() < 2 || returnKeyword == null) {
 			System.out.println("ERROR - Improperly formatted search attempted.");
 			words.clear();
 			return null;
@@ -617,11 +617,13 @@ public class TextToCommands {
 		System.out.println("returnType: " + returnType);
 
 		List<String> arguments = new ArrayList<>();
+		if (argumentKeyword != null){
 		wordsString = wordsString.replace(argumentKeyword, "").trim();		if (!wordsString.isEmpty() && wordsString.contains(" "))
 			arguments = Arrays.stream(wordsString.split(" ")).map(s -> s.substring(0, 1).toUpperCase() + s.substring(1))
 					.collect(Collectors.toList());
 		else if (!wordsString.isEmpty())
 			arguments = Collections.singletonList(wordsString.substring(0, 1).toUpperCase() + wordsString.substring(1));
+		}
 		words.clear();
 
 		System.out.println("arguments: " + arguments);
