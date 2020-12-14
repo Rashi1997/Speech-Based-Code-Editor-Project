@@ -31,4 +31,5 @@ Import-Package: javax.annotation;version="1.2.0"
 Automatic-Module-Name: voice2code
 Bundle-ClassPath: bin/,
  lib/voice2text-dependencies.jar,
- lib/mockito-all-2.0.2-beta.jar
+ lib/mockito-all-2.0.2-beta.jar,
+ lib/javaparser-core-3.18.0.jar

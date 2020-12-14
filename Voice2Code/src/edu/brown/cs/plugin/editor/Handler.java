@@ -998,6 +998,7 @@ public class Handler {
 	
 	public void moveCursorToPosition(int line, int column) {
 		
+		System.out.print("l " + line+  "c " + column);
 		IEditorPart editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		
 		if (editor instanceof ITextEditor) {
@@ -1020,18 +1021,17 @@ public class Handler {
 		}
 		
 	}
+	private void moveCursorToLineNumber(int lineNumber) {
+		
+		int lineOffset;
+		System.out.println(lineNumber);
+		/*try {
+			lineOffset = this.document.getLineLength(lineNumber);
+			this.editor.selectAndReveal(lineOffset, 0);
+		} catch (BadLocationException e) {
+			// calm down
+		}*/
+		
+	}
 }
 
-//	private void moveCursorToLineNumber(int lineNumber) {
-//		
-//		int lineOffset;
-//		
-//		try {
-//			lineOffset = this.document.getLineLength(lineNumber);
-//			this.editor.selectAndReveal(lineOffset, 0);
-//		} catch (BadLocationException e) {
-//			// calm down
-//		}
-//		
-//	}
-//}
