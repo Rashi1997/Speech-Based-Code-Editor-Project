@@ -188,26 +188,7 @@ public class Handler {
 				int offset = styledText.getCaretOffset();
 				int newOffset = Integer.min(styledText.getCharCount(), offset + 1);
 				styledText.setCaretOffset(newOffset); // TODO: not sure why don't need +1
-				IServiceLocator serviceLocator = PlatformUI.getWorkbench();
-				ICommandService commandService = (ICommandService) serviceLocator.getService(ICommandService.class);
-				Command command = commandService.getCommand("org.eclipse.ui.edit.undo"); //$NON-NLS-1$
-				try {
-					command.executeWithChecks(new ExecutionEvent());
-				} catch (ExecutionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (NotDefinedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (NotEnabledException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (NotHandledException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
+			}});
 	}
 	
 	public void editUndo() {

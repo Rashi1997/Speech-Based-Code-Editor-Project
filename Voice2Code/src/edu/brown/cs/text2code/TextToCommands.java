@@ -111,6 +111,7 @@ public class TextToCommands {
 		keywords.put("it", "int");
 		///
 		keywords.put("enter", "\n");
+		keywords.put("for loop", "for");
 		
 	}
 
@@ -163,6 +164,11 @@ public class TextToCommands {
 		// aliases
 		termDeclarators.add("capital variable");
 		termDeclarators.add("capitol variable");
+		
+		termDeclarators.add("camel case");
+		termDeclarators.add("normal case");
+		termDeclarators.add("capital case");
+		termDeclarators.add("capitol case");
 	}
 
 	/**
@@ -468,7 +474,7 @@ public class TextToCommands {
 	// ex input: this is a var end declare something else
 	//    output: 'this', 'is', 'a', 'var'
 	public List<String> buildVariable(List<String> words) {
-		List<String> result = new ArrayList<String>();
+		/*List<String> result = new ArrayList<String>();
 		int size = words.size();
 		if (words.size() < 2) {
 			throw new InvalidCommandException("A declaration was not followed by 'end declare'");
@@ -482,7 +488,16 @@ public class TextToCommands {
 				removeFirstN(1, words);
 			}
 		}
-		throw new InvalidCommandException("A declaration was not followed by 'end declare'");
+		throw new InvalidCommandException("A declaration was not followed by 'end declare'");*/
+		List<String> result = new ArrayList<String>();
+		if (words.size() == 0) {
+			throw new InvalidCommandException("variable command was used without arguments");
+		}
+		for (String s : words) {
+			result.add(s);
+		}
+		removeFirstN(words.size(), words); // Simplified, just turns everything in words into variable
+		return result;
 	}
 
 	public boolean checkForDeclarations(List<String> words) {
@@ -505,6 +520,18 @@ public class TextToCommands {
 					editorHandler.insertText(getAllCapsString(var));
 					break;
 				case "capitol variable":  
+					editorHandler.insertText(getAllCapsString(var));
+					break;
+				case "camel case":
+					editorHandler.insertText(getVariableString(var));
+					break;
+				case "normal case":
+					editorHandler.insertText(getNormalCase(var));
+					break;
+				case "capital case":
+					editorHandler.insertText(getAllCapsString(var));
+					break;
+				case "capitol case":  
 					editorHandler.insertText(getAllCapsString(var));
 					break;
 				default:
