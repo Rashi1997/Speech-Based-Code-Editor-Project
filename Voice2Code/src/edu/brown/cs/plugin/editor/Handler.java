@@ -43,7 +43,9 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.formatter.ContentFormatter;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
@@ -717,7 +719,56 @@ public class Handler {
 	}
 	
 	public void deleteCurrentWord() {
-		
+		Display.getDefault().syncExec(new Runnable() {
+			@Override
+			public void run() {
+				IWorkbenchWindow iw = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				IWorkbenchPage workbenchPage = iw.getActivePage();
+				IEditorPart part = workbenchPage.getActiveEditor();
+				ITextEditor editor = (ITextEditor) part;
+				editor.setFocus();
+				IDocumentProvider dp = editor.getDocumentProvider();
+				IDocument document = dp.getDocument(editor.getEditorInput());
+
+				Control control = editor.getAdapter(Control.class);
+				StyledText styledText = (StyledText) control;
+				int offset = styledText.getCaretOffset();
+				int left = offset;
+				int right = offset;
+				char c = 'x'; 
+				try {	
+//					c = document.getChar(offset);
+					while (!Character.isWhitespace(c) && left != 0) {
+						left -= 1;
+						c = document.getChar(left);
+					}
+					c = document.getChar(right);
+				} catch (BadLocationException e) {
+				}
+				try {
+					c = document.getChar(offset);
+//					while (c != ' ') {
+//						left -= 1;
+//						c = document.getChar(left);
+//					}
+					c = document.getChar(right);
+					while (!Character.isWhitespace(c) && right != styledText.getCharCount()) {
+						right += 1;
+						c = document.getChar(right);
+					}
+					
+				} catch (BadLocationException e) {
+				}
+				try {
+					System.out.println("Left: " + left + " Right: " + right);
+					document.replace(left, right-left, "");
+					styledText.setCaretOffset(left);
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+					return;
+				}
+			}
+		});
 	}
 	
 	public void undo() {
