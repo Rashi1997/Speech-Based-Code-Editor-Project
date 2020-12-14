@@ -95,7 +95,7 @@ public class Handler {
 					e.printStackTrace();
 				}
 
-				styledText.setCaretOffset(offset + text.length() + 1);
+				styledText.setCaretOffset(offset + text.length());
 
 			}
 
