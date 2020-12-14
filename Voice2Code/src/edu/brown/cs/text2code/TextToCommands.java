@@ -665,6 +665,7 @@ public class TextToCommands {
 		else
 			returnType = getNormalCase(Collections.singletonList(returnType));
 		returnType = returnType.substring(0, 1).toUpperCase() + returnType.substring(1);
+		returnType = returnType.equalsIgnoreCase("void") ? "void" : returnType;
 		System.out.println("returnType: " + returnType);
 
 		List<String> arguments = new ArrayList<>();
